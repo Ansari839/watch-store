@@ -20,21 +20,42 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 export default function AdminDashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const { data: session, status } = useSession();
+    const router = useRouter();
     const [isSidebarOpen, setSidebarOpen] = useState(true);
+
+    useEffect(() => {
+        if (status === "loading") return;
+        if (!session || session.user?.role !== "ADMIN") {
+            router.push("/");
+        }
+    }, [session, status, router]);
+
+    if (status === "loading" || !session || session.user?.role !== "ADMIN") {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     const menuItems = [
         { icon: LayoutDashboard, label: "Overview", href: "/admin" },
         { icon: Box, label: "Products", href: "/admin/products" },
-        { icon: ShoppingBag, label: "Orders", href: "/admin/orders" },
-        { icon: Users, label: "Customers", href: "/admin/customers" },
-        { icon: TrendingUp, label: "Analytics", href: "/admin/analytics" },
-        { icon: MessageSquare, label: "Support", href: "/admin/support" }, // Added Support link
-        { icon: Settings, label: "Settings", href: "/admin/settings" },
+        { icon: ShoppingBag, label: "Orders", href: "/admin#orders" },
+        { icon: Users, label: "Customers", href: "/admin#customers" },
+        { icon: TrendingUp, label: "Analytics", href: "/admin#analytics" },
+        { icon: MessageSquare, label: "Support", href: "/admin/support" },
+        { icon: Settings, label: "Settings", href: "/admin#settings" },
     ];
 
     return (

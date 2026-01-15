@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { LayoutContent } from "@/components/layout/LayoutContent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -37,9 +36,7 @@ export default function RootLayout({
           <AuthProvider>
             <WishlistProvider>
               <CartProvider>
-                <Header />
-                <main>{children}</main>
-                <Footer />
+                <LayoutContent>{children}</LayoutContent>
                 <Toaster position="top-center" richColors />
               </CartProvider>
             </WishlistProvider>
