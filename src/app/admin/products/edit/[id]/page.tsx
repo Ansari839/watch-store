@@ -105,14 +105,18 @@ export default function EditProductPage() {
 
     const handleSave = async () => {
         try {
+            // Destructure to remove fields that shouldn't be sent to API directly
+            const { category, stockStatus, ...prismaData } = formData;
+
             const res = await fetch(`/api/admin/products/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    ...formData,
+                    ...prismaData,
+                    price: parseFloat(prismaData.price),
                     images: images.length > 0 ? images : ["/assets/watches/watch-1.png"],
                     variants,
-                    categoryId: categories.find(c => c.name === formData.category)?.id || categories[0]?.id
+                    categoryId: categories.find(c => c.name === category)?.id || categories[0]?.id
                 })
             });
             if (res.ok) {

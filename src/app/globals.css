@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: 40 30% 98.5%;
+  --background: 210 20% 98%;
   --foreground: 220 25% 12%;
 
   --card: 0 0% 100%;
@@ -19,17 +19,17 @@
   --accent: 16 80% 68%;
   --accent-foreground: 0 0% 100%;
 
-  --muted: 40 15% 94%;
+  --muted: 210 20% 94%;
   --muted-foreground: 220 10% 45%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 40 15% 88%;
-  --input: 40 20% 90%;
+  --border: 210 15% 90%;
+  --input: 210 20% 92%;
   --ring: 174 72% 38%;
 
-  --radius: 1rem;
+  --radius: 1.5rem;
 
   /* Custom luxury tokens */
   --gold: 43 85% 55%;
@@ -37,10 +37,11 @@
   --navy: 225 45% 15%;
 
   --teal-gradient: linear-gradient(135deg, hsl(174 72% 38%), hsl(180 60% 30%));
-  --hero-grid: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+  --hero-grid: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
 
-  --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-  --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+  --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+  --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.12);
+  --site-bg: radial-gradient(circle at 50% 50%, #f8f9fa 0%, #edf1f5 100%);
 }
 
 /* Theme 1: Electric Executive (Professional & Clean) */

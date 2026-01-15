@@ -62,7 +62,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background pt-24 pb-20">
+        <div className="min-h-screen bg-transparent pt-24 pb-20">
             <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="mb-12">
@@ -129,8 +129,8 @@ export default function DashboardPage() {
                                             <div>
                                                 <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Status</p>
                                                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.status === 'DELIVERED' ? 'bg-emerald-500/10 text-emerald-500' :
-                                                        order.status === 'CANCELLED' ? 'bg-red-500/10 text-red-500' :
-                                                            'bg-amber-500/10 text-amber-500'
+                                                    order.status === 'CANCELLED' ? 'bg-red-500/10 text-red-500' :
+                                                        'bg-amber-500/10 text-amber-500'
                                                     }`}>
                                                     {order.status}
                                                 </span>

@@ -122,7 +122,7 @@ function ProductsContent() {
     ];
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-transparent">
             <main>
                 {/* Breadcrumb */}
                 <div className="bg-muted py-4">
