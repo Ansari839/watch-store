@@ -15,11 +15,6 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 
-const watch1 = "/assets/watches/watch-1.png";
-const watch2 = "/assets/watches/watch-2.png";
-const watch3 = "/assets/watches/watch-3.png";
-const watch4 = "/assets/watches/watch-4.png";
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -51,14 +46,12 @@ export const FeaturedProducts = () => {
         const res = await fetch("/api/products");
         const data = await res.json();
 
-        // Defensive check: ensure data is an array
         if (!Array.isArray(data)) {
           console.error("Expected array but received:", data);
           setProducts([]);
           return;
         }
 
-        // Filter for featured products (or just take the first 4 if not many are featured)
         const featured = data.filter((p: any) => p.featured).slice(0, 4);
         setProducts(featured.length > 0 ? featured : data.slice(0, 4));
       } catch (error) {
@@ -78,6 +71,7 @@ export const FeaturedProducts = () => {
       </div>
     );
   }
+
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -115,97 +109,99 @@ export const FeaturedProducts = () => {
               variants={itemVariants}
               className="group"
             >
-              <Link href={`/products/${product.id}`}>
-                <div className="relative bg-white dark:bg-card rounded-3xl p-6 overflow-hidden shadow-soft transition-all duration-500 group-hover:shadow-premium group-hover:-translate-y-2 group-hover:bg-primary/[0.02]">
-                  {/* Badge */}
-                  {product.badge && (
-                    <span className="absolute top-5 left-5 px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-primary text-white rounded-full z-10 shadow-sm">
-                      {product.badge}
-                    </span>
-                  )}
+              {/* Product Card Container */}
+              <div className="relative bg-card/60 backdrop-blur-xl rounded-3xl p-6 overflow-hidden shadow-soft transition-all duration-500 group-hover:shadow-premium group-hover:-translate-y-2 group-hover:bg-primary/[0.05] border border-border/50">
+                {/* Main Link Overlay */}
+                <Link href={`/products/${product.id}`} className="absolute inset-0 z-10" />
 
-                  {/* Wishlist                                    */}
-                  <button
+                {/* Badge */}
+                {product.badge && (
+                  <span className="absolute top-5 left-5 px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-primary text-white rounded-full z-20 shadow-sm">
+                    {product.badge}
+                  </span>
+                )}
+
+                {/* Wishlist */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleWishlist({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      image: product.images[0]
+                    });
+                  }}
+                  className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 shadow-lg ${isInWishlist(product.id)
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-white/90 backdrop-blur-sm text-foreground hover:text-primary"
+                    }`}
+                >
+                  <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? "fill-current" : ""}`} />
+                </button>
+
+                {/* Image */}
+                <div className="relative aspect-square flex items-center justify-center p-4">
+                  <motion.img
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-2"
+                  />
+                </div>
+
+                {/* Quick Add Overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-30 flex gap-2">
+                  <Button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      toggleWishlist({
+                      addToCart({
                         id: product.id,
                         name: product.name,
                         price: product.price,
-                        image: product.images[0]
+                        image: product.images[0],
+                        quantity: 1
                       });
                     }}
-                    className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 shadow-lg ${isInWishlist(product.id)
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-white/90 backdrop-blur-sm text-foreground hover:text-primary"
-                      }`}
+                    className="flex-1 h-12 bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-lg gap-2"
                   >
-                    <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? "fill-current" : ""}`} />
-                  </button>
+                    <ShoppingBag className="w-4 h-4" />
+                    Add to Bag
+                  </Button>
+                  <Link
+                    href={`https://wa.me/1234567890?text=${encodeURIComponent(`I'm interested in the ${product.name}`)}`}
+                    target="_blank"
+                    className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-2xl flex items-center justify-center transition-colors shadow-lg"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                  </Link>
+                </div>
+              </div>
 
-                  {/* Image */}
-                  <div className="relative aspect-square flex items-center justify-center p-4">
-                    <motion.img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-2"
-                    />
+              {/* Info */}
+              <Link href={`/products/${product.id}`} className="mt-6 flex flex-col items-center text-center group">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className={`w-3 h-3 ${s <= Math.floor(product.rating) ? "fill-gold text-gold" : "fill-muted text-muted"}`} />
+                    ))}
                   </div>
-
-                  {/* Quick Add Overlay */}
-                  <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-20 flex gap-2">
-                    <Button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        addToCart({
-                          id: product.id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.images[0],
-                          quantity: 1
-                        });
-                      }}
-                      className="flex-1 h-12 bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-lg gap-2"
-                    >
-                      <ShoppingBag className="w-4 h-4" />
-                      Add to Bag
-                    </Button>
-                    <Link
-                      href={`https://wa.me/1234567890?text=${encodeURIComponent(`I'm interested in the ${product.name}`)}`}
-                      target="_blank"
-                      className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-2xl flex items-center justify-center transition-colors shadow-lg"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <MessageCircle className="w-5 h-5" />
-                    </Link>
-                  </div>
+                  <span className="text-xs font-semibold text-foreground/80">{product.rating}</span>
                 </div>
 
-                {/* Info */}
-                <div className="mt-6 flex flex-col items-center text-center">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <div className="flex items-center gap-0.5">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} className={`w-3 h-3 ${s <= Math.floor(product.rating) ? "fill-gold text-gold" : "fill-muted text-muted"}`} />
-                      ))}
-                    </div>
-                    <span className="text-xs font-semibold text-foreground/80">{product.rating}</span>
-                  </div>
+                <h3 className="font-display font-semibold text-lg text-foreground group-hover:text-primary transition-colors duration-300 mb-1">
+                  {product.name}
+                </h3>
 
-                  <h3 className="font-display font-semibold text-lg text-foreground group-hover:text-primary transition-colors duration-300 mb-1">
-                    {product.name}
-                  </h3>
-
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">${product.price}</span>
-                    {product.originalPrice && (
-                      <span className="text-sm text-muted-foreground line-through decoration-primary/30">
-                        ${product.originalPrice}
-                      </span>
-                    )}
-                  </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">${product.price}</span>
+                  {product.originalPrice && (
+                    <span className="text-sm text-muted-foreground line-through decoration-primary/30">
+                      ${product.originalPrice}
+                    </span>
+                  )}
                 </div>
               </Link>
             </motion.div>

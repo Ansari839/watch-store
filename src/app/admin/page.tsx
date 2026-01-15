@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useTheme } from "@/context/ThemeContext";
-import { Palette, Check } from "lucide-react";
+import { Palette, Check, Layout } from "lucide-react";
 
 const stats = [
     { label: "Total Revenue", value: "$45,231.89", change: "+20.1%", positive: true, icon: DollarSign },
@@ -143,33 +143,35 @@ export default function AdminDashboardPage() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, index) => (
-                    <motion.div
-                        key={stat.label}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="p-8 bg-white dark:bg-card rounded-[2rem] shadow-soft border border-border/50"
-                    >
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="w-14 h-14 rounded-2xl bg-[#F8F9FA] dark:bg-background flex items-center justify-center">
-                                <stat.icon className="w-7 h-7 text-primary" />
+                {
+                    stats.map((stat, index) => (
+                        <motion.div
+                            key={stat.label}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="p-8 bg-white dark:bg-card rounded-[2rem] shadow-soft border border-border/50"
+                        >
+                            <div className="flex justify-between items-start mb-6">
+                                <div className="w-14 h-14 rounded-2xl bg-[#F8F9FA] dark:bg-background flex items-center justify-center">
+                                    <stat.icon className="w-7 h-7 text-primary" />
+                                </div>
+                                <span className={`flex items-center gap-1 text-sm font-bold ${stat.positive ? 'text-green-500' : 'text-red-500'}`}>
+                                    {stat.change}
+                                    {stat.positive ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+                                </span>
                             </div>
-                            <span className={`flex items-center gap-1 text-sm font-bold ${stat.positive ? 'text-green-500' : 'text-red-500'}`}>
-                                {stat.change}
-                                {stat.positive ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                            </span>
-                        </div>
-                        <div>
-                            <p className="text-muted-foreground font-medium mb-1">{stat.label}</p>
-                            <h3 className="text-3xl font-bold tracking-tight text-foreground">{stat.value}</h3>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
+                            <div>
+                                <p className="text-muted-foreground font-medium mb-1">{stat.label}</p>
+                                <h3 className="text-3xl font-bold tracking-tight text-foreground">{stat.value}</h3>
+                            </div>
+                        </motion.div>
+                    ))
+                }
+            </div >
 
             {/* Recent Orders Section */}
-            <div className="grid lg:grid-cols-3 gap-8">
+            < div className="grid lg:grid-cols-3 gap-8" >
                 <div className="lg:col-span-2 bg-white dark:bg-card rounded-[2.5rem] shadow-soft border border-border/50 overflow-hidden">
                     <div className="p-8 border-b border-border/50 flex items-center justify-between">
                         <h2 className="font-display text-2xl font-bold">Recent Orders</h2>
@@ -245,7 +247,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full blur-3xl" />
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

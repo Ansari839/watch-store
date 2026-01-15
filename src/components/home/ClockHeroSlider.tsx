@@ -24,8 +24,13 @@ export const ClockHeroSlider = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [direction, setDirection] = useState(1);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Update time every second for clock hands
   useEffect(() => {
@@ -138,7 +143,7 @@ export const ClockHeroSlider = () => {
       />
 
       {/* Sparkle Particles */}
-      {[...Array(15)].map((_, i) => (
+      {mounted && [...Array(15)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 bg-primary rounded-full"

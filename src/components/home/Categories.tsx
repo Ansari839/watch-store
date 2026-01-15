@@ -67,12 +67,12 @@ export const Categories = () => {
             >
               <Link
                 href={`/products?category=${category.id}`}
-                className="group relative block rounded-[2rem] overflow-hidden bg-white dark:bg-card shadow-soft hover:shadow-premium transition-all duration-500 hover:-translate-y-2"
+                className="group relative block rounded-[2.5rem] overflow-hidden bg-card/60 backdrop-blur-xl border border-border/50 shadow-soft hover:shadow-premium transition-all duration-500 hover:-translate-y-2"
               >
                 {/* Textures */}
-                <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
-                <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} opacity-[0.03] group-hover:opacity-10 transition-opacity`} />
-                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/5 rounded-full blur-3xl text-primary" />
+                <div className="absolute inset-0 bg-grid opacity-5 pointer-events-none" />
+                <div className={`absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
 
                 {/* Content */}
                 <div className="relative p-10 flex flex-col min-h-[354px] lg:min-h-[420px]">
