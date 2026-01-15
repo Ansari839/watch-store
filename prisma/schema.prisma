@@ -150,3 +150,13 @@ model OrderItem {
   orderId   String
 }
 
+model LandingPageSettings {
+  id              String   @id @default("singleton")
+  heroProductIds  String[] // IDs of products to show in the hero slider
+  featuredIds     String[] // Explicit IDs for featured section
+  footerEmail     String?
+  footerPhone     String?
+  footerAddress   String?
+  footerSocials   Json?    // Store social links
+  updatedAt       DateTime @updatedAt
+}
