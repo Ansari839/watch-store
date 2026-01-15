@@ -113,19 +113,19 @@ export const ClockHeroSlider = () => {
       <motion.div
         className="absolute inset-0"
         animate={{
-          background: `radial-gradient(circle at 10% 20%, ${activeWatch.color}08 0%, transparent 40%)`
+          background: `radial-gradient(circle at 10% 20%, ${activeWatch.color}50 0%, transparent 70%)`
         }}
         transition={{ duration: 1 }}
       />
 
       {/* Grid Pattern Utility */}
-      <div className="absolute inset-0 bg-grid opacity-30" />
+      <div className="absolute inset-0 bg-grid opacity-90" />
 
       {/* Floating Glow Orbs */}
       <motion.div
         className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none"
         animate={{
-          background: `radial-gradient(circle, ${activeWatch.color}30, transparent 70%)`,
+          background: `radial-gradient(circle, ${activeWatch.color}95, transparent 70%)`,
           x: [0, 50, 0],
           y: [0, -30, 0],
         }}
@@ -135,12 +135,15 @@ export const ClockHeroSlider = () => {
       <motion.div
         className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] rounded-full blur-[100px] pointer-events-none"
         animate={{
-          background: `radial-gradient(circle, hsl(var(--primary) / 0.2), transparent 70%)`,
+          background: `radial-gradient(circle, hsl(var(--primary) / 0.6), transparent 70%)`,
           x: [0, -30, 0],
           y: [0, 40, 0],
         }}
         transition={{ duration: 10, repeat: Infinity }}
       />
+
+      {/* Dark Vignette for Depth */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,transparent_30%,rgba(0,0,0,0.3)_100%)]" />
 
       {/* Sparkle Particles */}
       {mounted && [...Array(15)].map((_, i) => (
@@ -427,9 +430,9 @@ export const ClockHeroSlider = () => {
                   <motion.div
                     className="w-72 h-72 sm:w-80 sm:h-80 lg:w-[320px] lg:h-[320px] rounded-full flex items-center justify-center relative overflow-hidden"
                     style={{
-                      background: `radial-gradient(circle, hsl(var(--card)) 0%, ${activeWatch.color}10 50%, ${activeWatch.color}20 100%)`,
-                      border: `3px solid ${activeWatch.color}30`,
-                      boxShadow: `0 0 60px ${activeWatch.color}30, inset 0 0 40px ${activeWatch.color}10`,
+                      background: `radial-gradient(circle, hsl(var(--card)) 0%, ${activeWatch.color}20 50%, ${activeWatch.color}30 100%)`,
+                      border: `3px solid ${activeWatch.color}50`,
+                      boxShadow: `0 0 80px ${activeWatch.color}40, inset 0 0 60px ${activeWatch.color}15`,
                     }}
                   >
                     {/* Watch Glow Inside Circle */}
@@ -567,27 +570,33 @@ export const ClockHeroSlider = () => {
             {/* Navigation Arrows */}
             <motion.button
               onClick={prevWatch}
-              className="absolute left-0 sm:left-4 lg:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-card/90 backdrop-blur shadow-lg flex items-center justify-center border border-border hover:bg-primary hover:text-primary-foreground transition-all z-30"
-              whileHover={{ scale: 1.1, x: -4 }}
+              className="absolute left-0 sm:left-4 lg:left-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-card backdrop-blur-md shadow-2xl flex items-center justify-center border-2 border-primary/30 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all z-30"
+              whileHover={{ scale: 1.15, x: -4 }}
               whileTap={{ scale: 0.95 }}
+              style={{
+                boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px ${activeWatch.color}20`
+              }}
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-7 h-7" />
             </motion.button>
 
             <motion.button
               onClick={nextWatch}
-              className="absolute right-0 sm:right-4 lg:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-card/90 backdrop-blur shadow-lg flex items-center justify-center border border-border hover:bg-primary hover:text-primary-foreground transition-all z-30"
-              whileHover={{ scale: 1.1, x: 4 }}
+              className="absolute right-0 sm:right-4 lg:right-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-card backdrop-blur-md shadow-2xl flex items-center justify-center border-2 border-primary/30 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all z-30"
+              whileHover={{ scale: 1.15, x: 4 }}
               whileTap={{ scale: 0.95 }}
+              style={{
+                boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px ${activeWatch.color}20`
+              }}
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-7 h-7" />
             </motion.button>
           </div>
         </div>
       </div>
 
       {/* Bottom Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20 bg-card/60 backdrop-blur-md px-4 py-3 rounded-full border border-border/50 shadow-xl">
         {watches.map((watch, index) => (
           <motion.button
             key={watch.id}
@@ -595,14 +604,18 @@ export const ClockHeroSlider = () => {
               setDirection(index > activeIndex ? 1 : -1);
               setActiveIndex(index);
             }}
-            className="relative h-1.5 rounded-full overflow-hidden bg-foreground/10"
-            animate={{ width: index === activeIndex ? 40 : 16 }}
+            className="relative h-2 rounded-full overflow-hidden bg-foreground/20"
+            animate={{ width: index === activeIndex ? 48 : 20 }}
             transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.1 }}
           >
             {index === activeIndex && (
               <motion.div
                 className="absolute inset-0 rounded-full"
-                style={{ backgroundColor: watch.color }}
+                style={{
+                  backgroundColor: watch.color,
+                  boxShadow: `0 0 12px ${watch.color}80`
+                }}
                 initial={{ scaleX: 0, originX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ duration: 5, ease: "linear" }}

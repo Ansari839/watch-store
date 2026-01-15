@@ -5,9 +5,16 @@ export class ProductController {
     static async getAll() {
         try {
             const products = await ProductModel.getAll();
+            // Ensure we always return an array
+            if (!Array.isArray(products)) {
+                console.error("ProductModel.getAll() did not return an array:", products);
+                return NextResponse.json([]);
+            }
             return NextResponse.json(products);
         } catch (error: any) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            console.error("Error fetching products:", error.message);
+            // Return empty array instead of error object to prevent frontend issues
+            return NextResponse.json([]);
         }
     }
 

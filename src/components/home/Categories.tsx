@@ -67,40 +67,40 @@ export const Categories = () => {
             >
               <Link
                 href={`/products?category=${category.id}`}
-                className="group relative block rounded-[2.5rem] overflow-hidden bg-card/60 backdrop-blur-xl border border-border/50 shadow-soft hover:shadow-premium transition-all duration-500 hover:-translate-y-2"
+                className="group relative block rounded-[3rem] overflow-hidden bg-card/80 backdrop-blur-2xl border-2 border-border/80 hover:border-primary/40 shadow-premium transition-all duration-700 hover:-translate-y-4"
               >
                 {/* Textures */}
-                <div className="absolute inset-0 bg-grid opacity-5 pointer-events-none" />
-                <div className={`absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                <div className="absolute -right-20 -top-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl" />
+                <div className="absolute inset-0 bg-grid opacity-15 pointer-events-none" />
+                <div className={`absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
+                <div className="absolute -right-20 -top-20 w-48 h-48 bg-primary/20 rounded-full blur-[100px]" />
 
                 {/* Content */}
-                <div className="relative p-10 flex flex-col min-h-[354px] lg:min-h-[420px]">
+                <div className="relative p-12 flex flex-col min-h-[380px] lg:min-h-[450px]">
                   {/* Text */}
                   <div className="flex-1 relative z-10">
-                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary/70 mb-2 block">
+                    <span className="text-[11px] font-extrabold tracking-[0.3em] uppercase text-primary mb-3 block">
                       {category.count} Products
                     </span>
-                    <h3 className="font-display text-3xl font-bold text-foreground mb-4">
+                    <h3 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
                       {category.title}
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed max-w-[200px]">
+                    <p className="text-muted-foreground leading-relaxed max-w-[240px] text-lg">
                       {category.description}
                     </p>
                   </div>
 
                   {/* CTA */}
-                  <div className="flex items-center gap-2 text-primary font-bold mt-6 group-hover:gap-4 transition-all">
+                  <div className="flex items-center gap-3 text-primary font-extrabold mt-8 group-hover:gap-5 transition-all text-lg">
                     <span>Explore Collection</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-6 h-6 stroke-[3px]" />
                   </div>
 
                   {/* Image */}
-                  <div className="absolute right-[-10%] bottom-[-5%] w-48 h-48 lg:w-64 lg:h-64 pointer-events-none transition-transform duration-700 group-hover:scale-105">
+                  <div className="absolute right-[-15%] bottom-[-10%] w-56 h-56 lg:w-72 lg:h-72 pointer-events-none transition-transform duration-1000 group-hover:scale-110 group-hover:-rotate-6">
                     <motion.img
                       src={category.image}
                       alt={category.title}
-                      className="w-full h-full object-contain filter drop-shadow-2xl brightness-[1.02] rotate-[-5deg] group-hover:rotate-[0deg] transition-all duration-700"
+                      className="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] brightness-[1.1] rotate-[-8deg] group-hover:rotate-[0deg] transition-all duration-1000"
                     />
                   </div>
                 </div>

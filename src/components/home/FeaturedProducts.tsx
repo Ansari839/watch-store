@@ -44,14 +44,26 @@ export const FeaturedProducts = () => {
     const fetchFeatured = async () => {
       try {
         const res = await fetch("/api/products");
-        const data = await res.json();
 
-        if (!Array.isArray(data)) {
-          console.error("Expected array but received:", data);
+        // Check if response is ok
+        if (!res.ok) {
+          console.error(`API returned status ${res.status}`);
           setProducts([]);
+          setLoading(false);
           return;
         }
 
+        const data = await res.json();
+
+        // Ensure data is an array
+        if (!Array.isArray(data)) {
+          console.error("Expected array but received:", data);
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
+
+        // Filter featured products or use first 4
         const featured = data.filter((p: any) => p.featured).slice(0, 4);
         setProducts(featured.length > 0 ? featured : data.slice(0, 4));
       } catch (error) {
@@ -110,13 +122,13 @@ export const FeaturedProducts = () => {
               className="group"
             >
               {/* Product Card Container */}
-              <div className="relative bg-card/60 backdrop-blur-xl rounded-3xl p-6 overflow-hidden shadow-soft transition-all duration-500 group-hover:shadow-premium group-hover:-translate-y-2 group-hover:bg-primary/[0.05] border border-border/50">
+              <div className="relative bg-card/80 backdrop-blur-2xl rounded-[2.5rem] p-6 overflow-hidden shadow-soft transition-all duration-500 group-hover:shadow-premium group-hover:-translate-y-3 group-hover:bg-primary/[0.08] border-2 border-border/70 group-hover:border-primary/30">
                 {/* Main Link Overlay */}
                 <Link href={`/products/${product.id}`} className="absolute inset-0 z-10" />
 
                 {/* Badge */}
                 {product.badge && (
-                  <span className="absolute top-5 left-5 px-3 py-1 text-[10px] font-bold tracking-wider uppercase bg-primary text-white rounded-full z-20 shadow-sm">
+                  <span className="absolute top-6 left-6 px-4 py-1.5 text-[10px] font-bold tracking-wider uppercase bg-primary text-white rounded-full z-20 shadow-md">
                     {product.badge}
                   </span>
                 )}
@@ -133,25 +145,27 @@ export const FeaturedProducts = () => {
                       image: product.images[0]
                     });
                   }}
-                  className={`absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all z-20 shadow-lg ${isInWishlist(product.id)
+                  className={`absolute top-6 right-6 w-11 h-11 rounded-full flex items-center justify-center transition-all z-20 shadow-xl ${isInWishlist(product.id)
                     ? "bg-primary text-primary-foreground"
-                    : "bg-white/90 backdrop-blur-sm text-foreground hover:text-primary"
+                    : "bg-white backdrop-blur-md text-foreground hover:text-primary border border-border/50"
                     }`}
                 >
-                  <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? "fill-current" : ""}`} />
+                  <Heart className={`w-5.5 h-5.5 ${isInWishlist(product.id) ? "fill-current" : ""}`} />
                 </button>
 
                 {/* Image */}
-                <div className="relative aspect-square flex items-center justify-center p-4">
+                <div className="relative aspect-square flex items-center justify-center p-6">
                   <motion.img
                     src={product.images[0]}
                     alt={product.name}
-                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-2"
+                    className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-115 group-hover:-rotate-3"
                   />
+                  {/* Image Glow */}
+                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full blur-3xl" />
                 </div>
 
                 {/* Quick Add Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-30 flex gap-2">
+                <div className="absolute inset-x-0 bottom-0 p-5 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out z-30 flex gap-3">
                   <Button
                     onClick={(e) => {
                       e.preventDefault();
@@ -164,18 +178,18 @@ export const FeaturedProducts = () => {
                         quantity: 1
                       });
                     }}
-                    className="flex-1 h-12 bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-lg gap-2"
+                    className="flex-1 h-14 bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-2xl gap-2 font-bold"
                   >
-                    <ShoppingBag className="w-4 h-4" />
+                    <ShoppingBag className="w-5 h-5" />
                     Add to Bag
                   </Button>
                   <Link
                     href={`https://wa.me/1234567890?text=${encodeURIComponent(`I'm interested in the ${product.name}`)}`}
                     target="_blank"
-                    className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-2xl flex items-center justify-center transition-colors shadow-lg"
+                    className="bg-green-600 hover:bg-green-700 text-white p-4 rounded-2xl flex items-center justify-center transition-colors shadow-2xl"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <MessageCircle className="w-5 h-5" />
+                    <MessageCircle className="w-6 h-6" />
                   </Link>
                 </div>
               </div>
