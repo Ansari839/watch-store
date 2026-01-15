@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { ThemeProvider } from "@/context/ThemeContext";
 import { Toaster } from "sonner";
 
 export default function RootLayout({
@@ -32,16 +33,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${playfair.variable} ${inter.variable} font-sans bg-background text-foreground antialiased`}>
-        <AuthProvider>
-          <WishlistProvider>
-            <CartProvider>
-              <Header />
-              <main>{children}</main>
-              <Footer />
-              <Toaster position="top-center" richColors />
-            </CartProvider>
-          </WishlistProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <WishlistProvider>
+              <CartProvider>
+                <Header />
+                <main>{children}</main>
+                <Footer />
+                <Toaster position="top-center" richColors />
+              </CartProvider>
+            </WishlistProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

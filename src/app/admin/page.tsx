@@ -14,6 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useTheme } from "@/context/ThemeContext";
+import { Palette, Check } from "lucide-react";
 
 const stats = [
     { label: "Total Revenue", value: "$45,231.89", change: "+20.1%", positive: true, icon: DollarSign },
@@ -77,6 +79,17 @@ export default function AdminDashboardPage() {
             default: return 'bg-gray-500/10 text-gray-500';
         }
     };
+
+    const themes = [
+        { id: "default", name: "Luxury Default", color: "bg-[#174e4c]", accent: "bg-[#f59e0b]" },
+        { id: "executive", name: "Electric Executive", color: "bg-white", accent: "bg-[#6366f1]" },
+        { id: "summer", name: "Mediterranean Summer", color: "bg-[#fffdf5]", accent: "bg-[#00b5ad]" },
+        { id: "sunset", name: "Sunset Boutique", color: "bg-[#faf9f6]", accent: "bg-[#ff5a1f]" },
+        { id: "cyber", name: "Cyber Mint", color: "bg-white", accent: "bg-[#00ffab]" },
+    ] as const;
+
+    const { theme: currentTheme, setTheme } = useTheme();
+
     return (
         <div className="space-y-10">
             {/* Welcome */}
@@ -90,6 +103,43 @@ export default function AdminDashboardPage() {
                     <Button className="rounded-2xl h-12 px-6 bg-primary font-bold shadow-lg shadow-primary/20">Add New Product</Button>
                 </div>
             </div>
+
+            {/* Store Aura Selection */}
+            <section className="bg-white dark:bg-card p-8 rounded-[2.5rem] border border-border/50 shadow-soft">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                        <Palette className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-bold">Store Aura</h2>
+                        <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Select Active Theme</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    {themes.map((t) => (
+                        <button
+                            key={t.id}
+                            onClick={() => setTheme(t.id)}
+                            className={`group relative p-4 rounded-3xl border-2 transition-all duration-300 text-left ${currentTheme === t.id ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30 bg-muted/20"
+                                }`}
+                        >
+                            <div className="flex flex-col gap-4">
+                                <div className="flex gap-1.5 grayscale group-hover:grayscale-0 transition-all">
+                                    <div className={`w-8 h-8 rounded-lg ${t.color} border border-border/50 shadow-sm`} />
+                                    <div className={`w-8 h-8 rounded-lg ${t.accent} shadow-sm`} />
+                                </div>
+                                <span className={`text-xs font-bold leading-tight ${currentTheme === t.id ? "text-primary" : "text-muted-foreground"}`}>{t.name}</span>
+                            </div>
+                            {currentTheme === t.id && (
+                                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center">
+                                    <Check className="w-3 h-3" />
+                                </div>
+                            )}
+                        </button>
+                    ))}
+                </div>
+            </section>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
