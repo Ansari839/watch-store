@@ -1,26 +1,195 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 40 30% 98.5%;
+  --foreground: 220 25% 12%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 220 25% 12%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 25% 12%;
+
+  --primary: 174 72% 38%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 174 40% 96%;
+  --secondary-foreground: 174 72% 30%;
+
+  --accent: 16 80% 68%;
+  --accent-foreground: 0 0% 100%;
+
+  --muted: 40 15% 94%;
+  --muted-foreground: 220 10% 45%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 40 15% 88%;
+  --input: 40 20% 90%;
+  --ring: 174 72% 38%;
+
+  --radius: 1rem;
+
+  /* Custom luxury tokens */
+  --gold: 43 85% 55%;
+  --gold-light: 43 85% 75%;
+  --navy: 225 45% 15%;
+
+  --teal-gradient: linear-gradient(135deg, hsl(174 72% 38%), hsl(180 60% 30%));
+  --hero-grid: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+
+  --shadow-soft: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Theme 1: Electric Executive */
+[data-theme="executive"] {
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --primary: 239 84% 67%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;
+  --accent: 239 84% 67%;
+  --ring: 239 84% 67%;
+  --border: 214 32% 91%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Theme 2: Mediterranean Summer */
+[data-theme="summer"] {
+  --background: 48 100% 98.5%;
+  --foreground: 200 40% 15%;
+  --primary: 174 100% 33%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 36 24% 94%;
+  --accent: 212 100% 50%;
+  --ring: 174 100% 33%;
+  --border: 36 24% 88%;
+}
+
+/* Theme 3: Sunset Boutique */
+[data-theme="sunset"] {
+  --background: 30 20% 98.5%;
+  --foreground: 15 30% 10%;
+  --primary: 15 100% 56%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 20 15% 15%;
+  --secondary-foreground: 15 100% 95%;
+  --accent: 8 85% 69%;
+  --ring: 15 100% 56%;
+  --border: 30 15% 90%;
+}
+
+/* Theme 4: Cyber Mint */
+[data-theme="cyber"] {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 4%;
+  --primary: 160 100% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 10% 96%;
+  --accent: 48 93% 53%;
+  --ring: 160 100% 40%;
+  --border: 240 6% 90%;
+}
+
+.dark {
+  --background: 220 25% 5%;
+  --foreground: 40 20% 98%;
+  --card: 220 25% 8%;
+  --card-foreground: 40 20% 98%;
+  --popover: 220 25% 8%;
+  --popover-foreground: 40 20% 98%;
+  --primary: 174 72% 50%;
+  --primary-foreground: 220 25% 5%;
+  --secondary: 220 20% 12%;
+  --secondary-foreground: 174 72% 50%;
+  --accent: 16 80% 68%;
+  --accent-foreground: 220 25% 5%;
+  --muted: 220 20% 15%;
+  --muted-foreground: 40 10% 65%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 20% 18%;
+  --input: 220 20% 18%;
+  --ring: 174 72% 50%;
+}
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* Special tokens */
+  --color-gold: hsl(var(--gold));
+  --color-gold-light: hsl(var(--gold-light));
+  --color-navy: hsl(var(--navy));
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+  }
+}
+
+.bg-grid {
+  background-image: var(--hero-grid);
+  background-size: 30px 30px;
+}
+
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-soft);
+}
+
+.font-display {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
 }
