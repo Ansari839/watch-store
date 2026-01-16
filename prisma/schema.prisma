@@ -161,3 +161,23 @@ model LandingPageSettings {
   footerSocials   Json?    // Store social links
   updatedAt       DateTime @updatedAt
 }
+
+model StoreSettings {
+  id                String   @id @default("singleton")
+  currency          String   @default("USD")
+  currencySymbol    String   @default("$")
+  taxPercentage     Float    @default(0)
+  shippingFlatRate  Float    @default(0)
+  
+  // Notification Settings
+  adminEmail        String?
+  orderEmailSubject String   @default("New Order Received")
+  orderEmailBody    String   @db.Text // HTML/Markdown template
+  
+  // Operational
+  maintenanceMode   Boolean  @default(false)
+  whatsappNotify    Boolean  @default(true)
+  whatsappNumber    String?  // The number customer will contact
+  
+  updatedAt         DateTime @updatedAt
+}

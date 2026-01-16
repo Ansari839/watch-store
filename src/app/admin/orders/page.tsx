@@ -7,7 +7,10 @@ import {
     Filter,
     ChevronRight,
     MoreHorizontal,
-    Download
+    Download,
+    Mail,
+    Smartphone,
+    MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -147,12 +150,44 @@ export default function AdminOrdersPage() {
                                         </select>
                                     </td>
                                     <td className="px-8 py-7">
-                                        <div className="flex justify-end gap-2">
-                                            <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 hover:text-primary">
+                                        <div className="flex justify-end gap-3 px-2">
+                                            {/* WhatsApp Button */}
+                                            <a
+                                                href={`https://wa.me/${order.customerPhone?.replace(/\D/g, '')}?text=${encodeURIComponent(
+                                                    `Hello ${order.customerName}, this is an update regarding your Order #${order.id.slice(-8).toUpperCase()} from Watch Store.\n\nCurrent Status: *${order.status.toUpperCase()}*\n\nThank you for your patience!`
+                                                )}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+                                                title="WhatsApp Customer"
+                                            >
+                                                <MessageSquare className="w-5 h-5" />
+                                            </a>
+
+                                            {/* Email Button */}
+                                            <a
+                                                href={`mailto:${order.customerEmail}?subject=${encodeURIComponent(`Order Update: #${order.id.slice(-8).toUpperCase()} - ${order.status}`)}&body=${encodeURIComponent(
+                                                    `Dear ${order.customerName},\n\nWe are writing to update you on your order #${order.id.slice(-8).toUpperCase()}.\n\nThe current status is: ${order.status.toUpperCase()}.\n\nThank you for choosing Watch Store!\n\nBest regards,\nThe Watch Store Team`
+                                                )}`}
+                                                className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all shadow-sm"
+                                                title="Email Customer"
+                                            >
+                                                <Mail className="w-5 h-5" />
+                                            </a>
+
+                                            {/* SMS Button */}
+                                            <a
+                                                href={`sms:${order.customerPhone}${typeof window !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent) ? '&' : '?'}body=${encodeURIComponent(
+                                                    `Watch Store Order #${order.id.slice(-8).toUpperCase()} Update - Status: ${order.status.toUpperCase()}. Thank you!`
+                                                )}`}
+                                                className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
+                                                title="SMS Customer"
+                                            >
+                                                <Smartphone className="w-5 h-5" />
+                                            </a>
+
+                                            <Button variant="ghost" size="icon" className="rounded-xl hover:bg-muted/50 border border-border/50">
                                                 <ChevronRight className="w-5 h-5" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" className="rounded-xl hover:bg-muted/50">
-                                                <MoreHorizontal className="w-5 h-5" />
                                             </Button>
                                         </div>
                                     </td>

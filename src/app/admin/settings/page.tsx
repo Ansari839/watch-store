@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Settings,
     Palette,
@@ -9,7 +9,12 @@ import {
     Bell,
     Shield,
     Mail,
-    Smartphone
+    Loader2,
+    Save,
+    CreditCard,
+    TrendingUp,
+    Truck,
+    AlertCircle
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
@@ -18,6 +23,45 @@ import { toast } from "sonner";
 export default function SettingsPage() {
     const { theme: currentTheme, setTheme } = useTheme();
     const [activeTab, setActiveTab] = useState("Store Aura");
+    const [settings, setSettings] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        fetchSettings();
+    }, []);
+
+    const fetchSettings = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch("/api/admin/settings");
+            const data = await res.json();
+            setSettings(data);
+        } catch (error) {
+            toast.error("Failed to load settings");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSave = async (sectionData: any) => {
+        try {
+            setSaving(true);
+            const res = await fetch("/api/admin/settings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(sectionData)
+            });
+            if (res.ok) {
+                toast.success("Settings updated successfully");
+                fetchSettings();
+            }
+        } catch (error) {
+            toast.error("Failed to save changes");
+        } finally {
+            setSaving(false);
+        }
+    };
 
     const themes = [
         { id: "default", name: "Luxury Default", color: "bg-[#174e4c]", accent: "bg-[#f59e0b]" },
@@ -29,11 +73,19 @@ export default function SettingsPage() {
 
     const sections = [
         { name: "Store Aura", icon: Palette },
-        { name: "General Settings", icon: Settings },
-        { name: "Regional", icon: Globe },
-        { name: "Notifications", icon: Bell },
-        { name: "Security", icon: Shield },
+        { name: "Localization", icon: Globe },
+        { name: "Communication", icon: Mail },
+        { name: "Operations", icon: TrendingUp },
     ];
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
+                <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                <p className="font-bold text-muted-foreground">Initializing Preferences...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-10 pb-20">
@@ -42,9 +94,6 @@ export default function SettingsPage() {
                     <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground tracking-tight text-stroke-sm">Preferences</h1>
                     <p className="text-muted-foreground mt-2 text-lg">Control your store's appearance and behavior.</p>
                 </div>
-                <Button className="rounded-2xl h-14 px-8 bg-primary font-bold shadow-lg shadow-primary/20">
-                    Save Changes
-                </Button>
             </div>
 
             <div className="grid lg:grid-cols-4 gap-10">
@@ -55,8 +104,8 @@ export default function SettingsPage() {
                             key={s.name}
                             onClick={() => setActiveTab(s.name)}
                             className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all ${activeTab === s.name
-                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                    : "text-muted-foreground hover:bg-muted/50"
+                                ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                : "text-muted-foreground hover:bg-muted/50"
                                 }`}
                         >
                             <s.icon className={`w-5 h-5 ${activeTab === s.name ? "text-white" : "text-muted-foreground"}`} />
@@ -105,13 +154,203 @@ export default function SettingsPage() {
                         </div>
                     )}
 
-                    {activeTab !== "Store Aura" && (
-                        <div className="bg-white dark:bg-card p-10 rounded-[3rem] border border-border/50 shadow-premium min-h-[400px] flex flex-col items-center justify-center text-center">
-                            <div className="w-20 h-20 rounded-full bg-muted/30 flex items-center justify-center mb-6">
-                                <Settings className="w-10 h-10 text-muted-foreground/50" />
+                    {activeTab === "Localization" && (
+                        <div className="bg-white dark:bg-card p-10 rounded-[3rem] border border-border/50 shadow-premium">
+                            <div className="flex items-center justify-between mb-10">
+                                <div>
+                                    <h3 className="text-2xl font-bold">Localization</h3>
+                                    <p className="text-muted-foreground">Configure your store's currency and regional data.</p>
+                                </div>
+                                <Button onClick={() => handleSave({
+                                    currency: settings.currency,
+                                    currencySymbol: settings.currencySymbol
+                                })} disabled={saving} className="rounded-xl h-12 px-6 bg-primary font-bold">
+                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                                    Save Regional
+                                </Button>
                             </div>
-                            <h3 className="text-2xl font-bold mb-2">{activeTab} Details</h3>
-                            <p className="text-muted-foreground max-w-sm">Configuration for {activeTab} will be available in the next system update. Use Store Aura for immediate UI customization.</p>
+
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Primary Currency</label>
+                                    <select
+                                        value={settings?.currency || "USD"}
+                                        onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
+                                        className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                    >
+                                        <option value="USD">USD - US Dollar</option>
+                                        <option value="PKR">PKR - Pakistani Rupee</option>
+                                        <option value="EUR">EUR - Euro</option>
+                                        <option value="GBP">GBP - British Pound</option>
+                                        <option value="AED">AED - UAE Dirham</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-3">
+                                    <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Currency Symbol</label>
+                                    <input
+                                        type="text"
+                                        value={settings?.currencySymbol || "$"}
+                                        onChange={(e) => setSettings({ ...settings, currencySymbol: e.target.value })}
+                                        placeholder="e.g. $, Rs, €"
+                                        className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "Communication" && (
+                        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                            <div className="bg-white dark:bg-card p-10 rounded-[3rem] border border-border/50 shadow-premium">
+                                <div className="flex items-center justify-between mb-10">
+                                    <div>
+                                        <h3 className="text-2xl font-bold">Order Notifications</h3>
+                                        <p className="text-muted-foreground">Manage how you receive alerts and what customers see.</p>
+                                    </div>
+                                    <Button onClick={() => handleSave({
+                                        adminEmail: settings.adminEmail,
+                                        whatsappNumber: settings.whatsappNumber,
+                                        orderEmailSubject: settings.orderEmailSubject,
+                                        orderEmailBody: settings.orderEmailBody,
+                                        whatsappNotify: settings.whatsappNotify
+                                    })} disabled={saving} className="rounded-xl h-12 px-6 bg-primary font-bold">
+                                        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                                        Save Communication
+                                    </Button>
+                                </div>
+
+                                <div className="space-y-8">
+                                    <div className="grid md:grid-cols-2 gap-8">
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Admin Receive Email</label>
+                                            <div className="relative">
+                                                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                                <input
+                                                    type="email"
+                                                    value={settings?.adminEmail || ""}
+                                                    onChange={(e) => setSettings({ ...settings, adminEmail: e.target.value })}
+                                                    placeholder="admin@example.com"
+                                                    className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl pl-16 pr-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Customer WhatsApp Contact</label>
+                                            <div className="relative">
+                                                <div className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                                    <CreditCard className="w-5 h-5 text-emerald-500" />
+                                                </div>
+                                                <input
+                                                    type="text"
+                                                    value={settings?.whatsappNumber || ""}
+                                                    onChange={(e) => setSettings({ ...settings, whatsappNumber: e.target.value })}
+                                                    placeholder="+92 300 1234567"
+                                                    className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl pl-16 pr-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid md:grid-cols-1 gap-8">
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Order Received Template (Subject)</label>
+                                            <input
+                                                type="text"
+                                                value={settings?.orderEmailSubject || ""}
+                                                onChange={(e) => setSettings({ ...settings, orderEmailSubject: e.target.value })}
+                                                className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                            />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Email Body (HTML Supported)</label>
+                                            <textarea
+                                                value={settings?.orderEmailBody || ""}
+                                                onChange={(e) => setSettings({ ...settings, orderEmailBody: e.target.value })}
+                                                className="w-full h-64 bg-muted/20 border border-border/50 rounded-2xl p-6 outline-none focus:ring-2 ring-primary/20 transition-all font-mono text-sm leading-relaxed"
+                                                placeholder="Enter email template content here..."
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between p-6 bg-primary/5 rounded-[2rem] border border-primary/10">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                                                <CreditCard className="w-6 h-6 text-primary" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold">WhatsApp Alerts</h4>
+                                                <p className="text-xs text-muted-foreground">Notify admin on WhatsApp for every new order.</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setSettings({ ...settings, whatsappNotify: !settings.whatsappNotify })}
+                                            className={`w-14 h-8 rounded-full transition-all flex items-center px-1 ${settings?.whatsappNotify ? "bg-primary" : "bg-muted"}`}
+                                        >
+                                            <div className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform ${settings?.whatsappNotify ? "translate-x-6" : "translate-x-0"}`} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "Operations" && (
+                        <div className="bg-white dark:bg-card p-10 rounded-[3rem] border border-border/50 shadow-premium">
+                            <div className="flex items-center justify-between mb-10">
+                                <div>
+                                    <h3 className="text-2xl font-bold">Operations</h3>
+                                    <p className="text-muted-foreground">Update your taxation and logistics logic.</p>
+                                </div>
+                                <Button onClick={() => handleSave({
+                                    taxPercentage: settings.taxPercentage,
+                                    shippingFlatRate: settings.shippingFlatRate,
+                                    maintenanceMode: settings.maintenanceMode
+                                })} disabled={saving} className="rounded-xl h-12 px-6 bg-primary font-bold">
+                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                                    Save Ops
+                                </Button>
+                            </div>
+
+                            <div className="space-y-8">
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Tax Percentage (%)</label>
+                                        <input
+                                            type="number"
+                                            value={settings?.taxPercentage || 0}
+                                            onChange={(e) => setSettings({ ...settings, taxPercentage: parseFloat(e.target.value) })}
+                                            className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Shipping Flat Rate ({settings?.currencySymbol})</label>
+                                        <input
+                                            type="number"
+                                            value={settings?.shippingFlatRate || 0}
+                                            onChange={(e) => setSettings({ ...settings, shippingFlatRate: parseFloat(e.target.value) })}
+                                            className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="p-8 rounded-[2rem] border-2 border-rose-500/20 bg-rose-500/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 border border-rose-500/20">
+                                            <AlertCircle className="w-8 h-8" />
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xl font-bold text-rose-500">Maintenance Mode</h4>
+                                            <p className="text-muted-foreground font-medium">Instantly close the storefront for maintenance.</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setSettings({ ...settings, maintenanceMode: !settings.maintenanceMode })}
+                                        className={`w-20 h-10 rounded-full transition-all flex items-center px-1.5 ${settings?.maintenanceMode ? "bg-rose-500 shadow-lg shadow-rose-500/30" : "bg-muted"}`}
+                                    >
+                                        <div className={`w-7 h-7 rounded-full bg-white shadow-md transform transition-transform ${settings?.maintenanceMode ? "translate-x-10" : "translate-x-0"}`} />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
