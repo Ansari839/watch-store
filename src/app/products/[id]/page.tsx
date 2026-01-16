@@ -191,9 +191,23 @@ export default function ProductDetailPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                 >
-                                    <span className="text-primary font-medium text-sm">
-                                        {product.category?.name}
-                                    </span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-primary font-bold text-sm bg-primary/10 px-3 py-1 rounded-full uppercase tracking-wider">
+                                            {product.category?.name}
+                                        </span>
+                                        {product.badge && (
+                                            <span className="text-accent font-bold text-sm bg-accent/10 px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                                                <Star className="w-3.5 h-3.5 fill-current" />
+                                                {product.badge}
+                                            </span>
+                                        )}
+                                        {product.rating >= 4.5 && !product.badge && (
+                                            <span className="text-gold font-bold text-sm bg-gold/10 px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                                                <Star className="w-3.5 h-3.5 fill-current" />
+                                                Bestseller
+                                            </span>
+                                        )}
+                                    </div>
 
                                     <h1 className="font-display text-3xl lg:text-4xl font-bold text-foreground mt-2 mb-4">
                                         {product.name}
@@ -215,18 +229,27 @@ export default function ProductDetailPage() {
                                         <span className="text-muted-foreground mr-2">({product.reviewCount || 0} reviews)</span>
                                     </div>
 
-                                    <div className="flex items-baseline gap-3 mb-8">
-                                        <span className="text-3xl font-bold text-foreground">{settings.currencySymbol}{product.price}</span>
-                                        {product.originalPrice && (
-                                            <>
-                                                <span className="text-xl text-muted-foreground line-through">
-                                                    {settings.currencySymbol}{product.originalPrice}
-                                                </span>
-                                                <span className="px-2 py-1 bg-accent/10 text-accent text-sm font-medium rounded">
-                                                    Save {settings.currencySymbol}{product.originalPrice - product.price}
-                                                </span>
-                                            </>
-                                        )}
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="flex flex-col">
+                                            <div className="flex items-baseline gap-3">
+                                                <span className="text-4xl font-black text-foreground">{settings.currencySymbol}{product.price}</span>
+                                                {product.originalPrice && (
+                                                    <span className="text-xl text-muted-foreground line-through decoration-primary/30">
+                                                        {settings.currencySymbol}{product.originalPrice}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {product.originalPrice && product.originalPrice > product.price && (
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-xs font-black rounded-full uppercase tracking-tighter">
+                                                        Save {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                                                    </span>
+                                                    <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                                                        Off Current List Price
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <p className="text-muted-foreground mb-8 leading-relaxed">

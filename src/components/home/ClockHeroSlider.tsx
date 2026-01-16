@@ -28,7 +28,6 @@ export const ClockHeroSlider = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [direction, setDirection] = useState(1);
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [mounted, setMounted] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -78,22 +77,6 @@ export const ClockHeroSlider = () => {
     }
   };
 
-  // Update time every second for clock hands
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Calculate rotation angles for clock hands
-  const seconds = currentTime.getSeconds();
-  const minutes = currentTime.getMinutes();
-  const hours = currentTime.getHours() % 12;
-
-  const secondRotation = seconds * 6; // 360 / 60 = 6 degrees per second
-  const minuteRotation = minutes * 6 + seconds * 0.1; // 6 degrees per minute + smooth transition
-  const hourRotation = hours * 30 + minutes * 0.5; // 30 degrees per hour + smooth transition
 
   const rotateX = useTransform(mouseY, [-300, 300], [15, -15]);
   const rotateY = useTransform(mouseX, [-300, 300], [-15, 15]);
@@ -150,27 +133,30 @@ export const ClockHeroSlider = () => {
 
   const slideVariants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 400 : -400,
+      x: dir > 0 ? 500 : -500,
       opacity: 0,
-      scale: 0.5,
-      rotateY: dir > 0 ? 45 : -45,
+      scale: 0.8,
+      rotateY: dir > 0 ? 30 : -30,
+      filter: "blur(10px)",
     }),
     center: {
       x: 0,
       opacity: 1,
       scale: 1,
       rotateY: 0,
+      filter: "blur(0px)",
       transition: {
         type: "spring",
-        stiffness: 100,
-        damping: 20,
+        stiffness: 70,
+        damping: 25,
       } as any
     },
     exit: (dir: number) => ({
-      x: dir > 0 ? -400 : 400,
+      x: dir > 0 ? -500 : 500,
       opacity: 0,
-      scale: 0.5,
-      rotateY: dir > 0 ? -45 : 45,
+      scale: 1.2,
+      rotateY: dir > 0 ? -30 : 30,
+      filter: "blur(10px)",
     }),
   };
 
@@ -264,28 +250,29 @@ export const ClockHeroSlider = () => {
             </motion.div>
 
             {/* Main Heading */}
-            <div className="space-y-2">
-              <motion.h1
-                className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-[1.1]"
+            <div className="space-y-1">
+              <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
+                className="flex items-center gap-4 justify-center lg:justify-start"
               >
-                Timeless
-              </motion.h1>
+                <div className="h-px w-12 bg-primary/30 hidden lg:block" />
+                <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-foreground tracking-tight">Timeless</h1>
+              </motion.div>
               <motion.h1
-                className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1]"
+                className="font-display text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
                 <span
-                  className="bg-clip-text text-transparent"
+                  className="bg-clip-text text-transparent italic"
                   style={{
                     backgroundImage: `linear-gradient(135deg, ${activeWatch.color}, hsl(var(--primary)))`
                   }}
                 >
-                  Elegance
+                  Sophistication
                 </span>
               </motion.h1>
             </div>
@@ -300,38 +287,50 @@ export const ClockHeroSlider = () => {
               Discover watches that define your style. Premium craftsmanship meets modern design.
             </motion.p>
 
-            {/* Active Watch Details */}
+            {/* Active Watch Details - Glassmorphism Card */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeIndex}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="flex flex-col sm:flex-row items-center lg:items-start gap-4 py-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-[2.5rem] shadow-2xl relative overflow-hidden group/detail max-w-md mx-auto lg:mx-0"
               >
-                <div className="text-center lg:text-left">
-                  <h3 className="text-2xl font-bold text-foreground">{activeWatch.name}</h3>
-                  <div className="flex items-center gap-2 mt-1 justify-center lg:justify-start">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${i < Math.floor(activeWatch.rating) ? 'fill-gold text-gold' : 'text-muted-foreground/30'}`}
-                        />
-                      ))}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
+                  <div className="text-center lg:text-left space-y-1">
+                    <h3 className="text-2xl font-bold text-foreground group-hover/detail:text-primary transition-colors">{activeWatch.name}</h3>
+                    <div className="flex items-center gap-2 justify-center lg:justify-start">
+                      <div className="flex">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < Math.floor(activeWatch.rating) ? 'fill-gold text-gold' : 'text-muted-foreground/30'}`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm font-bold text-muted-foreground">{activeWatch.rating}</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">({activeWatch.rating})</span>
                   </div>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold" style={{ color: activeWatch.color }}>
-                    {settings.currencySymbol}{activeWatch.price}
-                  </span>
-                  {activeWatch.originalPrice && (
-                    <span className="text-lg text-muted-foreground line-through">
-                      {settings.currencySymbol}{activeWatch.originalPrice}
-                    </span>
-                  )}
+
+                  <div className="flex flex-col items-center sm:items-end">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-black" style={{ color: activeWatch.color }}>
+                        {settings.currencySymbol}{activeWatch.price}
+                      </span>
+                      {activeWatch.originalPrice && (
+                        <span className="text-lg text-muted-foreground line-through decoration-primary/30">
+                          {settings.currencySymbol}{activeWatch.originalPrice}
+                        </span>
+                      )}
+                    </div>
+                    {activeWatch.originalPrice && activeWatch.originalPrice > activeWatch.price && (
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full mt-1">
+                        Save {settings.currencySymbol}{activeWatch.originalPrice - activeWatch.price}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -376,10 +375,10 @@ export const ClockHeroSlider = () => {
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 Free Shipping
               </div>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-blue-500" />
                 2 Year Warranty
-              </div>
+              </div> */}
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-purple-500" />
                 Easy Returns
@@ -529,80 +528,6 @@ export const ClockHeroSlider = () => {
                       transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                     />
 
-                    {/* Clock Hands - Extending Beyond Circle, Visible Outside */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 5 }}>
-                      {/* Hour Hand - Extends well beyond circle */}
-                      <motion.div
-                        className="absolute w-3 sm:w-4 origin-bottom rounded-full"
-                        style={{
-                          height: '200px',
-                          background: `linear-gradient(to top, ${activeWatch.color}, ${activeWatch.color}60)`,
-                          bottom: '50%',
-                          boxShadow: `0 0 20px ${activeWatch.color}80, 0 0 40px ${activeWatch.color}40`,
-                        }}
-                        animate={{ rotate: hourRotation }}
-                        transition={{ type: "spring", stiffness: 50, damping: 20 }}
-                      />
-
-                      {/* Minute Hand - Extends well beyond circle */}
-                      <motion.div
-                        className="absolute w-2.5 sm:w-3 origin-bottom rounded-full"
-                        style={{
-                          height: '240px',
-                          background: `linear-gradient(to top, hsl(var(--foreground)), hsl(var(--foreground) / 0.5))`,
-                          bottom: '50%',
-                          boxShadow: '0 0 15px hsl(var(--foreground) / 0.5)',
-                        }}
-                        animate={{ rotate: minuteRotation }}
-                        transition={{ type: "spring", stiffness: 50, damping: 20 }}
-                      />
-
-                      {/* Second Hand - Extends well beyond circle */}
-                      <motion.div
-                        className="absolute w-1.5 sm:w-2 origin-bottom rounded-full"
-                        style={{
-                          height: '260px',
-                          background: 'linear-gradient(to top, #ef4444, #ef444450)',
-                          bottom: '50%',
-                          boxShadow: '0 0 15px #ef444480',
-                        }}
-                        animate={{ rotate: secondRotation }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 30,
-                        }}
-                      />
-
-                      {/* Second Hand Tail */}
-                      <motion.div
-                        className="absolute w-1.5 sm:w-2 origin-top rounded-full"
-                        style={{
-                          height: '50px',
-                          background: '#ef4444',
-                          top: '50%',
-                          boxShadow: '0 0 10px #ef444460',
-                        }}
-                        animate={{ rotate: secondRotation }}
-                        transition={{
-                          type: "spring",
-                          stiffness: 300,
-                          damping: 30,
-                        }}
-                      />
-
-                      {/* Center Dot */}
-                      <motion.div
-                        className="absolute w-5 h-5 sm:w-6 sm:h-6 rounded-full"
-                        style={{
-                          backgroundColor: activeWatch.color,
-                          boxShadow: `0 0 20px ${activeWatch.color}`,
-                          zIndex: 10,
-                        }}
-                        animate={{ scale: [1, 1.15, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                    </div>
 
                     {/* Main Watch Image - In Front */}
                     <motion.img

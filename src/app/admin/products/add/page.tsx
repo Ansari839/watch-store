@@ -31,6 +31,8 @@ export default function AddProductPage() {
     const [formData, setFormData] = useState({
         name: "",
         price: "",
+        originalPrice: "",
+        badge: "",
         description: "",
         category: "Men's Luxury",
         stockStatus: "In Stock",
@@ -89,6 +91,8 @@ export default function AddProductPage() {
                     ...formData,
                     images: images.length > 0 ? images : ["/assets/watches/watch-1.png"], // Placeholder
                     variants,
+                    price: parseFloat(formData.price) || 0,
+                    originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
                     categoryId: categories.find(c => c.name === formData.category)?.id || categories[0]?.id
                 })
             });
@@ -168,16 +172,39 @@ export default function AddProductPage() {
                                         />
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label className="text-sm font-bold text-muted-foreground px-1 uppercase tracking-wider">Base Price ({settings.currencySymbol})</label>
+                                        <label className="text-sm font-bold text-muted-foreground px-1 uppercase tracking-wider">Sale Price ({settings.currencySymbol})</label>
                                         <input
                                             type="number"
                                             name="price"
                                             value={formData.price}
                                             onChange={handleInputChange}
-                                            placeholder="Base selling price"
+                                            placeholder="Current selling price"
                                             className="w-full p-4 bg-[#F8F9FA] dark:bg-background border-none rounded-2xl text-base ring-offset-background focus:ring-2 ring-primary/20 transition-all outline-none"
                                         />
                                     </div>
+                                    <div className="space-y-2.5">
+                                        <label className="text-sm font-bold text-muted-foreground px-1 uppercase tracking-wider">Display Price ({settings.currencySymbol})</label>
+                                        <input
+                                            type="number"
+                                            name="originalPrice"
+                                            value={formData.originalPrice}
+                                            onChange={handleInputChange}
+                                            placeholder="Price before discount (optional)"
+                                            className="w-full p-4 bg-[#F8F9FA] dark:bg-background border-none rounded-2xl text-base ring-offset-background focus:ring-2 ring-primary/20 transition-all outline-none"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2.5">
+                                    <label className="text-sm font-bold text-muted-foreground px-1 uppercase tracking-wider">Product Tag (Badge)</label>
+                                    <input
+                                        type="text"
+                                        name="badge"
+                                        value={formData.badge}
+                                        onChange={handleInputChange}
+                                        placeholder="e.g. Bestseller, Limited Edition, New Arrival"
+                                        className="w-full p-4 bg-[#F8F9FA] dark:bg-background border-none rounded-2xl text-base ring-offset-background focus:ring-2 ring-primary/20 transition-all outline-none"
+                                    />
                                 </div>
 
                                 <div className="space-y-2.5">
@@ -186,7 +213,7 @@ export default function AddProductPage() {
                                         name="description"
                                         value={formData.description}
                                         onChange={handleInputChange}
-                                        rows={6}
+                                        rows={4}
                                         placeholder="Enter a compelling luxury product description..."
                                         className="w-full p-4 bg-[#F8F9FA] dark:bg-background border-none rounded-2xl text-base ring-offset-background focus:ring-2 ring-primary/20 transition-all outline-none resize-none"
                                     />
