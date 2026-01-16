@@ -53,7 +53,7 @@ export default function DashboardPage() {
             <div className="min-h-screen flex items-center justify-center pt-20">
                 <div className="text-center">
                     <h1 className="text-2xl font-bold mb-4">Please log in to view your dashboard</h1>
-                    <Button asChild rounded-2xl>
+                    <Button asChild className="rounded-2xl">
                         <Link href="/login">Login Now</Link>
                     </Button>
                 </div>

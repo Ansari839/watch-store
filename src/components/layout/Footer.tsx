@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Mail, MapPin, Phone, Facebook, Instagram, Twitter } from "lucide-react";
 
@@ -23,6 +24,21 @@ const footerLinks = {
 };
 
 export const Footer = () => {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/admin/landing");
+        const data = await res.json();
+        if (data && !data.error) setSettings(data);
+      } catch (err) {
+        console.error("Footer settings fetch error:", err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto px-4">
@@ -40,13 +56,13 @@ export const Footer = () => {
               Your trusted destination for quality timepieces. We curate the finest watches from around the world.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href={settings?.footerSocials?.facebook || "#"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href={settings?.footerSocials?.instagram || "#"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
+              <a href={settings?.footerSocials?.twitter || "#"} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-primary transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
             </div>
@@ -84,15 +100,21 @@ export const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span className="text-background/70">123 Watch Street, Timepiece City, TC 12345</span>
+                <span className="text-background/70">
+                  {settings?.footerAddress || "123 Watch Street, Timepiece City, TC 12345"}
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-background/70">+1 (555) 123-4567</span>
+                <span className="text-background/70">
+                  {settings?.footerPhone || "+1 (555) 123-4567"}
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                <span className="text-background/70">hello@timecraft.com</span>
+                <span className="text-background/70">
+                  {settings?.footerEmail || "hello@timecraft.com"}
+                </span>
               </li>
             </ul>
           </div>

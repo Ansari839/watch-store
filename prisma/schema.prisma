@@ -154,6 +154,7 @@ model LandingPageSettings {
   id              String   @id @default("singleton")
   heroProductIds  String[] // IDs of products to show in the hero slider
   featuredIds     String[] // Explicit IDs for featured section
+  categoryImages  Json?    // Store category ID to image URL mapping
   footerEmail     String?
   footerPhone     String?
   footerAddress   String?

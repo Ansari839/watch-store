@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -36,6 +37,25 @@ const categories = [
 ];
 
 export const Categories = () => {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/admin/landing");
+        const data = await res.json();
+        if (data && !data.error) setSettings(data);
+      } catch (err) {
+        console.error("Categories settings fetch error:", err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const getCategoryImage = (catId: string, defaultImage: string) => {
+    return settings?.categoryImages?.[catId] || defaultImage;
+  };
+
   return (
     <section className="py-16 lg:py-24 bg-transparent relative">
       <div className="container mx-auto px-4">
@@ -98,7 +118,7 @@ export const Categories = () => {
                   {/* Image */}
                   <div className="absolute right-[-15%] bottom-[-10%] w-56 h-56 lg:w-72 lg:h-72 pointer-events-none transition-transform duration-1000 group-hover:scale-110 group-hover:-rotate-6">
                     <motion.img
-                      src={category.image}
+                      src={getCategoryImage(category.id, category.image)}
                       alt={category.title}
                       className="w-full h-full object-contain filter drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] brightness-[1.1] rotate-[-8deg] group-hover:rotate-[0deg] transition-all duration-1000"
                     />

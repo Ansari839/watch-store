@@ -43,29 +43,40 @@ export const FeaturedProducts = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const res = await fetch("/api/products");
+        // Fetch CMS settings and products in parallel
+        const [settingsRes, prodRes] = await Promise.all([
+          fetch("/api/admin/landing"),
+          fetch("/api/products")
+        ]);
 
-        // Check if response is ok
-        if (!res.ok) {
-          console.error(`API returned status ${res.status}`);
+        if (!prodRes.ok) {
+          console.error(`API returned status ${prodRes.status}`);
           setProducts([]);
           setLoading(false);
           return;
         }
 
-        const data = await res.json();
+        const settings = await settingsRes.json();
+        const allProducts = await prodRes.json();
 
-        // Ensure data is an array
-        if (!Array.isArray(data)) {
-          console.error("Expected array but received:", data);
+        if (!Array.isArray(allProducts)) {
+          console.error("Expected array but received:", allProducts);
           setProducts([]);
           setLoading(false);
           return;
         }
 
-        // Filter featured products or use first 4
-        const featured = data.filter((p: any) => p.featured).slice(0, 4);
-        setProducts(featured.length > 0 ? featured : data.slice(0, 4));
+        if (settings?.featuredIds?.length > 0) {
+          // Use CMS selected products
+          const featured = settings.featuredIds
+            .map((id: string) => allProducts.find((p: any) => p.id === id))
+            .filter(Boolean);
+          setProducts(featured);
+        } else {
+          // Fallback to products marked 'featured' in DB
+          const featured = allProducts.filter((p: any) => p.featured).slice(0, 4);
+          setProducts(featured.length > 0 ? featured : allProducts.slice(0, 4));
+        }
       } catch (error) {
         console.error("Failed to fetch featured products:", error);
         setProducts([]);

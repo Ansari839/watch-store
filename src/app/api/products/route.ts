@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { ProductController } from "@/controllers/ProductController";
 
 export async function GET() {

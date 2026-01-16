@@ -4,6 +4,8 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-mo
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight, Star, ShoppingBag, Eye } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 
 const watch1 = "/assets/watches/watch-1.png";
 const watch2 = "/assets/watches/watch-2.png";
@@ -11,15 +13,17 @@ const watch3 = "/assets/watches/watch-3.png";
 const watch4 = "/assets/watches/watch-4.png";
 const watch5 = "/assets/watches/watch-5.png";
 
-const watches = [
-  { id: 1, image: watch1, name: "Classic Silver", price: "$299", originalPrice: "$399", rating: 4.8, tag: "Bestseller", color: "#0D9488" }, // Teal
-  { id: 2, image: watch2, name: "Rose Elegance", price: "$449", originalPrice: "$549", rating: 4.9, tag: "New Arrival", color: "#BE123C" }, // Crimson
-  { id: 3, image: watch3, name: "Tech Pro", price: "$399", originalPrice: "$499", rating: 4.7, tag: "Smart", color: "#1E293B" }, // Navy
-  { id: 4, image: watch4, name: "Golden Chrono", price: "$599", originalPrice: "$799", rating: 5.0, tag: "Premium", color: "#B45309" }, // Gold
-  { id: 5, image: watch5, name: "Dive Master", price: "$549", originalPrice: "$699", rating: 4.8, tag: "Sport", color: "#0369A1" }, // Blue
+const defaultWatches = [
+  { id: "1", images: ["/assets/watches/watch-1.png"], name: "Classic Silver", price: 299, originalPrice: 399, rating: 4.8, badge: "Bestseller", color: "#0D9488" },
+  { id: "2", images: ["/assets/watches/watch-2.png"], name: "Rose Elegance", price: 449, originalPrice: 549, rating: 4.9, badge: "New Arrival", color: "#BE123C" },
+  { id: "3", images: ["/assets/watches/watch-3.png"], name: "Tech Pro", price: 399, originalPrice: 499, rating: 4.7, badge: "Smart", color: "#1E293B" },
+  { id: "4", images: ["/assets/watches/watch-4.png"], name: "Golden Chrono", price: 599, originalPrice: 799, rating: 5.0, badge: "Premium", color: "#B45309" },
+  { id: "5", images: ["/assets/watches/watch-5.png"], name: "Dive Master", price: 549, originalPrice: 699, rating: 4.8, badge: "Sport", color: "#0369A1" },
 ];
 
 export const ClockHeroSlider = () => {
+  const [watches, setWatches] = useState<any[]>(defaultWatches);
+  const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [direction, setDirection] = useState(1);
@@ -30,7 +34,48 @@ export const ClockHeroSlider = () => {
 
   useEffect(() => {
     setMounted(true);
+    fetchHeroProducts();
   }, []);
+
+  const fetchHeroProducts = async () => {
+    try {
+      const [settingsRes, prodRes] = await Promise.all([
+        fetch("/api/admin/landing"),
+        fetch("/api/products")
+      ]);
+
+      const settings = await settingsRes.json();
+      const allProducts = await prodRes.json();
+
+      if (!Array.isArray(allProducts)) return;
+
+      let heroProducts = [];
+
+      if (settings?.heroProductIds?.length > 0) {
+        heroProducts = settings.heroProductIds
+          .map((id: string) => allProducts.find((p: any) => p.id === id))
+          .filter(Boolean);
+      } else {
+        // Automatically use latest 5 products as fallback instead of hardcoded defaults
+        heroProducts = allProducts.slice(0, 5);
+      }
+
+      if (heroProducts.length > 0) {
+        const formattedProducts = heroProducts.map((p: any) => ({
+          ...p,
+          color: p.color || (p.name.includes("Gold") ? "#B45309" : p.name.includes("Pro") ? "#1E293B" : "#065f46"),
+          tag: p.badge || "Featured",
+          price: p.price, // Ensure price is explicitly passed
+          originalPrice: p.originalPrice
+        }));
+        setWatches(formattedProducts);
+      }
+    } catch (error) {
+      console.error("Hero Slider Fetch Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Update time every second for clock hands
   useEffect(() => {
@@ -80,6 +125,26 @@ export const ClockHeroSlider = () => {
   }, []);
 
   const activeWatch = watches[activeIndex];
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!activeWatch) return;
+
+    addToCart({
+      id: activeWatch.id,
+      name: activeWatch.name,
+      price: activeWatch.price,
+      image: activeWatch.images?.[0] || activeWatch.image,
+      quantity: 1
+    });
+
+    toast.success(`${activeWatch.name} added to cart!`, {
+      description: "Review your selection in the bag.",
+      duration: 3000,
+      position: "bottom-right",
+    });
+  };
 
   const slideVariants = {
     enter: (dir: number) => ({
@@ -258,11 +323,13 @@ export const ClockHeroSlider = () => {
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-bold" style={{ color: activeWatch.color }}>
-                    {activeWatch.price}
+                    ${activeWatch.price}
                   </span>
-                  <span className="text-lg text-muted-foreground line-through">
-                    {activeWatch.originalPrice}
-                  </span>
+                  {activeWatch.originalPrice && (
+                    <span className="text-lg text-muted-foreground line-through">
+                      ${activeWatch.originalPrice}
+                    </span>
+                  )}
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -274,7 +341,11 @@ export const ClockHeroSlider = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <Button size="lg" className="gap-2 text-base group px-8">
+              <Button
+                onClick={handleAddToCart}
+                size="lg"
+                className="gap-2 text-base group px-8"
+              >
                 <ShoppingBag className="w-5 h-5" />
                 Add to Cart
                 <motion.span
@@ -386,7 +457,7 @@ export const ClockHeroSlider = () => {
                   }}
                 >
                   <img
-                    src={watch.image}
+                    src={watch.images?.[0] || watch.image}
                     alt={watch.name}
                     className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain"
                   />
@@ -533,7 +604,7 @@ export const ClockHeroSlider = () => {
 
                     {/* Main Watch Image - In Front */}
                     <motion.img
-                      src={activeWatch.image}
+                      src={activeWatch.images?.[0] || activeWatch.image}
                       alt={activeWatch.name}
                       className="w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 object-contain drop-shadow-2xl relative z-10"
                       animate={{
@@ -561,7 +632,7 @@ export const ClockHeroSlider = () => {
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ delay: 0.3, type: "spring" }}
                   >
-                    <span className="font-bold text-lg">{activeWatch.price}</span>
+                    <span className="font-bold text-lg">${activeWatch.price}</span>
                   </motion.div>
                 </motion.div>
               </AnimatePresence>

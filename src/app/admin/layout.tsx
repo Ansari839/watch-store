@@ -13,7 +13,8 @@ import {
     TrendingUp,
     Package,
     ArrowUpRight,
-    MessageSquare, // Added MessageSquare
+    MessageSquare,
+    Layout,
     Search,
     Menu,
     X
@@ -54,6 +55,7 @@ export default function AdminDashboardLayout({
         { icon: ShoppingBag, label: "Orders", href: "/admin#orders" },
         { icon: Users, label: "Customers", href: "/admin#customers" },
         { icon: TrendingUp, label: "Analytics", href: "/admin#analytics" },
+        { icon: Layout, label: "Landing Page", href: "/admin/landing" },
         { icon: MessageSquare, label: "Support", href: "/admin/support" },
         { icon: Settings, label: "Settings", href: "/admin#settings" },
     ];
