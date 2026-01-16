@@ -16,9 +16,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useStore } from "@/context/StoreContext";
 
 export default function DashboardPage() {
     const { data: session } = useSession();
+    const { settings } = useStore();
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -124,7 +126,7 @@ export default function DashboardPage() {
                                         <div className="flex flex-wrap items-center gap-4 md:gap-8">
                                             <div>
                                                 <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Total</p>
-                                                <p className="font-bold">${order.totalAmount.toLocaleString()}</p>
+                                                <p className="font-bold">{settings.currencySymbol}{order.totalAmount.toLocaleString()}</p>
                                             </div>
                                             <div>
                                                 <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Status</p>

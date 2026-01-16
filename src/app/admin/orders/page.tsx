@@ -13,10 +13,12 @@ import {
     MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useStore } from "@/context/StoreContext";
 import { toast } from "sonner";
 
 export default function AdminOrdersPage() {
     const [orders, setOrders] = useState<any[]>([]);
+    const { settings } = useStore();
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("All");
     const [searchTerm, setSearchTerm] = useState("");
@@ -136,7 +138,7 @@ export default function AdminOrdersPage() {
                                             <span className="text-xs text-muted-foreground">{order.customerEmail}</span>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-7 font-bold text-primary">${order.total.toLocaleString()}</td>
+                                    <td className="px-8 py-7 font-bold text-primary">{settings.currencySymbol}{order.total.toLocaleString()}</td>
                                     <td className="px-8 py-7">
                                         <select
                                             value={order.status}

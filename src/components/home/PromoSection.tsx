@@ -4,11 +4,13 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Clock, Percent } from "lucide-react";
+import { useStore } from "@/context/StoreContext";
 
 const watch4 = "/assets/watches/watch-4.png";
 const watch5 = "/assets/watches/watch-5.png";
 
 export const PromoSection = () => {
+  const { settings } = useStore();
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -109,7 +111,7 @@ export const PromoSection = () => {
                   <span className="text-xs font-bold tracking-[0.2em] uppercase text-white/80 mb-1 block">Global Logistics</span>
                   <h3 className="font-display text-2xl lg:text-3xl font-bold mb-2">Free Express Shipping</h3>
                   <p className="text-white/80 text-sm max-w-xs leading-relaxed">
-                    Complimentary worldwide delivery on all orders over $150. Your luxury timepiece, delivered with care.
+                    Complimentary worldwide delivery on all orders over {settings.currencySymbol}150. Your luxury timepiece, delivered with care.
                   </p>
                 </div>
               </div>

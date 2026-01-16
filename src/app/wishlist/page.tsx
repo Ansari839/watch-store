@@ -6,10 +6,12 @@ import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { Heart, ShoppingBag, Trash2, ArrowLeft, Watch } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useStore } from "@/context/StoreContext";
 
 export default function WishlistPage() {
     const { wishlist, removeFromWishlist } = useWishlist();
     const { addToCart } = useCart();
+    const { settings } = useStore();
 
     return (
         <div className="min-h-screen bg-background pt-24 pb-20">
@@ -53,7 +55,7 @@ export default function WishlistPage() {
 
                                     <div className="space-y-3">
                                         <h3 className="font-display text-xl font-bold group-hover:text-primary transition-colors">{item.name}</h3>
-                                        <p className="text-2xl font-bold text-foreground">${item.price.toLocaleString()}</p>
+                                        <p className="text-2xl font-bold text-foreground">{settings.currencySymbol}{item.price.toLocaleString()}</p>
                                     </div>
                                 </Link>
 

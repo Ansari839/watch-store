@@ -17,9 +17,11 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useStore } from "@/context/StoreContext";
 
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<any[]>([]);
+    const { settings } = useStore();
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -182,7 +184,7 @@ export default function AdminProductsPage() {
                                             {product.name.split(' ')[0]} {/* Placeholder for category name if not populated */}
                                         </span>
                                     </td>
-                                    <td className="px-8 py-6 font-bold text-foreground">${product.price.toLocaleString()}</td>
+                                    <td className="px-8 py-6 font-bold text-foreground">{settings.currencySymbol}{product.price.toLocaleString()}</td>
                                     <td className="px-8 py-6">
                                         <div className="flex flex-col gap-1">
                                             <span className={`text-sm font-bold ${product.stock > 10 ? 'text-foreground' : 'text-accent'}`}>

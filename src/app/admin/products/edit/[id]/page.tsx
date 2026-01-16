@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useStore } from "@/context/StoreContext";
 
 const tabs = [
     { id: "general", label: "General Info", icon: Layout },
@@ -34,6 +35,7 @@ export default function EditProductPage() {
     const router = useRouter();
 
     const [activeTab, setActiveTab] = useState("general");
+    const { settings } = useStore();
     const [formData, setFormData] = useState({
         name: "",
         price: "",
@@ -211,7 +213,7 @@ export default function EditProductPage() {
                                         />
                                     </div>
                                     <div className="space-y-2.5">
-                                        <label className="text-sm font-bold text-muted-foreground px-1 uppercase tracking-wider">Base Price ($)</label>
+                                        <label className="text-sm font-bold text-muted-foreground px-1 uppercase tracking-wider">Base Price ({settings.currencySymbol})</label>
                                         <input
                                             type="number"
                                             name="price"

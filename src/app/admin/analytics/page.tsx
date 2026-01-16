@@ -14,10 +14,12 @@ import {
     Loader2,
     ChevronDown
 } from "lucide-react";
+import { useStore } from "@/context/StoreContext";
 import { toast } from "sonner";
 
 export default function AnalyticsPage() {
     const [data, setData] = useState<any>(null);
+    const { settings } = useStore();
     const [loading, setLoading] = useState(true);
     const [activePeriod, setActivePeriod] = useState("Week");
 
@@ -40,8 +42,8 @@ export default function AnalyticsPage() {
     }
 
     const analyticsStats = [
-        { label: "Avg. Order Value", value: `$${data?.kpis.avgOrderValue || 0}`, change: "+12.5%", icon: DollarSign, color: "text-amber-500", bg: "bg-amber-500/10" },
-        { label: "Total Revenue", value: `$${data?.kpis.totalRevenue.toLocaleString() || 0}`, change: "+18.2%", icon: ShoppingBag, color: "text-rose-500", bg: "bg-rose-500/10" },
+        { label: "Avg. Order Value", value: `${settings.currencySymbol}${data?.kpis.avgOrderValue || 0}`, change: "+12.5%", icon: DollarSign, color: "text-amber-500", bg: "bg-amber-500/10" },
+        { label: "Total Revenue", value: `${settings.currencySymbol}${data?.kpis.totalRevenue.toLocaleString() || 0}`, change: "+18.2%", icon: ShoppingBag, color: "text-rose-500", bg: "bg-rose-500/10" },
         { label: "Delivered Items", value: data?.kpis.deliveredCount || 0, change: "All Time", icon: Clock, color: "text-indigo-500", bg: "bg-indigo-500/10" },
         { label: "Sales Growth", value: "24.5%", change: "+4.1%", icon: TrendingUp, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     ];
@@ -107,7 +109,7 @@ export default function AnalyticsPage() {
                                                 className="w-full max-w-[32px] bg-gradient-to-t from-primary/80 to-primary rounded-t-lg group-hover/bar:from-primary group-hover/bar:to-primary-light transition-all relative shadow-lg shadow-primary/10"
                                             >
                                                 <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-black px-2 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all duration-300 scale-75 group-hover/bar:scale-100 border border-border">
-                                                    ${d.value.toLocaleString()}{activePeriod !== 'Day' ? 'k' : ''}
+                                                    {settings.currencySymbol}{d.value.toLocaleString()}{activePeriod !== 'Day' ? 'k' : ''}
                                                 </div>
                                             </motion.div>
                                         </div>
@@ -136,7 +138,7 @@ export default function AnalyticsPage() {
                         <div className="space-y-10">
                             <div>
                                 <div className="flex items-center justify-between text-4xl font-black mb-4 tracking-tighter">
-                                    ${data?.kpis.totalRevenue.toLocaleString() || "0"}
+                                    {settings.currencySymbol}{data?.kpis.totalRevenue.toLocaleString() || "0"}
                                     <div className="bg-emerald-500/20 p-2 rounded-xl">
                                         <ArrowUpRight className="w-6 h-6 text-emerald-400" />
                                     </div>
@@ -151,7 +153,7 @@ export default function AnalyticsPage() {
                                 </div>
                                 <div className="flex justify-between mt-3">
                                     <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">78% achieved</span>
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Target: $250k</span>
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Target: {settings.currencySymbol}250k</span>
                                 </div>
                             </div>
 
@@ -203,7 +205,7 @@ export default function AnalyticsPage() {
                                         <span className="font-bold text-base group-hover/cat:text-primary transition-colors">{item.name}</span>
                                     </div>
                                     <span className="text-sm font-black text-muted-foreground">
-                                        ${item.revenue.toLocaleString()} <span className="opacity-40 text-[10px] ml-1">({item.share}%)</span>
+                                        {settings.currencySymbol}{item.revenue.toLocaleString()} <span className="opacity-40 text-[10px] ml-1">({item.share}%)</span>
                                     </span>
                                 </div>
                                 <div className="w-full h-2.5 bg-muted/30 rounded-full overflow-hidden border border-border/50">
