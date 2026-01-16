@@ -17,20 +17,25 @@ import { toast } from "sonner";
 import { useTheme } from "@/context/ThemeContext";
 import { Palette, Check, Layout } from "lucide-react";
 
-const stats = [
-    { label: "Total Revenue", value: "$45,231.89", change: "+20.1%", positive: true, icon: DollarSign },
-    { label: "Active Orders", value: "+2350", change: "+180.1%", positive: true, icon: ShoppingBag },
-    { label: "Total Customers", value: "+12,234", change: "+19%", positive: true, icon: Users },
-    { label: "Conversion Rate", value: "3.2%", change: "-2.4%", positive: false, icon: ArrowUpRight },
-];
-
 export default function AdminDashboardPage() {
     const [orders, setOrders] = useState<any[]>([]);
+    const [dashboardStats, setDashboardStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchOrders();
+        fetchStats();
     }, []);
+
+    const fetchStats = async () => {
+        try {
+            const res = await fetch("/api/admin/stats");
+            const data = await res.json();
+            setDashboardStats(data);
+        } catch (error) {
+            console.error("Failed to fetch stats:", error);
+        }
+    };
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -80,15 +85,36 @@ export default function AdminDashboardPage() {
         }
     };
 
-    const themes = [
-        { id: "default", name: "Luxury Default", color: "bg-[#174e4c]", accent: "bg-[#f59e0b]" },
-        { id: "executive", name: "Electric Executive", color: "bg-white", accent: "bg-[#6366f1]" },
-        { id: "summer", name: "Mediterranean Summer", color: "bg-[#fffdf5]", accent: "bg-[#00b5ad]" },
-        { id: "sunset", name: "Sunset Boutique", color: "bg-[#faf9f6]", accent: "bg-[#ff5a1f]" },
-        { id: "cyber", name: "Cyber Mint", color: "bg-white", accent: "bg-[#00ffab]" },
-    ] as const;
-
-    const { theme: currentTheme, setTheme } = useTheme();
+    const statsConfig = [
+        {
+            label: "Total Revenue",
+            value: dashboardStats ? `$${dashboardStats.totalRevenue.toLocaleString()}` : "$0.00",
+            change: dashboardStats ? `${dashboardStats.revenueGrowth > 0 ? '+' : ''}${dashboardStats.revenueGrowth}%` : "+0%",
+            positive: dashboardStats ? dashboardStats.revenueGrowth >= 0 : true,
+            icon: DollarSign
+        },
+        {
+            label: "Active Orders",
+            value: dashboardStats ? `+${dashboardStats.activeOrders}` : "0",
+            change: "+12%", // Mock trend for now 
+            positive: true,
+            icon: ShoppingBag
+        },
+        {
+            label: "Total Customers",
+            value: dashboardStats ? `+${dashboardStats.totalCustomers}` : "0",
+            change: "+8%", // Mock trend for now 
+            positive: true,
+            icon: Users
+        },
+        {
+            label: "Conversion Rate",
+            value: dashboardStats ? `${dashboardStats.conversionRate}%` : "0%",
+            change: "-0.4%", // Mock trend 
+            positive: false,
+            icon: ArrowUpRight
+        },
+    ];
 
     return (
         <div className="space-y-10">
@@ -104,47 +130,10 @@ export default function AdminDashboardPage() {
                 </div>
             </div>
 
-            {/* Store Aura Selection */}
-            <section className="bg-white dark:bg-card p-8 rounded-[2.5rem] border border-border/50 shadow-soft">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                        <Palette className="w-5 h-5" />
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-bold">Store Aura</h2>
-                        <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Select Active Theme</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    {themes.map((t) => (
-                        <button
-                            key={t.id}
-                            onClick={() => setTheme(t.id)}
-                            className={`group relative p-4 rounded-3xl border-2 transition-all duration-300 text-left ${currentTheme === t.id ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/30 bg-muted/20"
-                                }`}
-                        >
-                            <div className="flex flex-col gap-4">
-                                <div className="flex gap-1.5 grayscale group-hover:grayscale-0 transition-all">
-                                    <div className={`w-8 h-8 rounded-lg ${t.color} border border-border/50 shadow-sm`} />
-                                    <div className={`w-8 h-8 rounded-lg ${t.accent} shadow-sm`} />
-                                </div>
-                                <span className={`text-xs font-bold leading-tight ${currentTheme === t.id ? "text-primary" : "text-muted-foreground"}`}>{t.name}</span>
-                            </div>
-                            {currentTheme === t.id && (
-                                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center">
-                                    <Check className="w-3 h-3" />
-                                </div>
-                            )}
-                        </button>
-                    ))}
-                </div>
-            </section>
-
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {
-                    stats.map((stat, index) => (
+                    statsConfig.map((stat, index) => (
                         <motion.div
                             key={stat.label}
                             initial={{ opacity: 0, y: 20 }}

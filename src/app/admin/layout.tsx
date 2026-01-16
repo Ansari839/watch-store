@@ -52,12 +52,12 @@ export default function AdminDashboardLayout({
     const menuItems = [
         { icon: LayoutDashboard, label: "Overview", href: "/admin" },
         { icon: Box, label: "Products", href: "/admin/products" },
-        { icon: ShoppingBag, label: "Orders", href: "/admin#orders" },
-        { icon: Users, label: "Customers", href: "/admin#customers" },
-        { icon: TrendingUp, label: "Analytics", href: "/admin#analytics" },
+        { icon: ShoppingBag, label: "Orders", href: "/admin/orders" },
+        { icon: Users, label: "Customers", href: "/admin/customers" },
+        { icon: TrendingUp, label: "Analytics", href: "/admin/analytics" },
         { icon: Layout, label: "Landing Page", href: "/admin/landing" },
         { icon: MessageSquare, label: "Support", href: "/admin/support" },
-        { icon: Settings, label: "Settings", href: "/admin#settings" },
+        { icon: Settings, label: "Settings", href: "/admin/settings" },
     ];
 
     return (
