@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWishlist } from "@/context/WishlistContext";
+import { useStore } from "@/context/StoreContext";
 
 export default function ProductsPage() {
     return (
@@ -40,6 +41,7 @@ function ProductsContent() {
     const [activeMaterial, setActiveMaterial] = useState("all");
     const [activeMovement, setActiveMovement] = useState("all");
     const { toggleWishlist, isInWishlist } = useWishlist();
+    const { settings } = useStore();
 
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get("search") || "";
@@ -101,9 +103,9 @@ function ProductsContent() {
 
     const priceRanges = [
         { id: "all", name: "All Prices" },
-        { id: "under300", name: "Under $300" },
-        { id: "300-500", name: "$300 - $500" },
-        { id: "over500", name: "Over $500" },
+        { id: "under300", name: `Under ${settings.currencySymbol}300` },
+        { id: "300-500", name: `${settings.currencySymbol}300 - ${settings.currencySymbol}500` },
+        { id: "over500", name: `Over ${settings.currencySymbol}500` },
     ];
 
     const materials = [
@@ -370,10 +372,10 @@ function ProductsContent() {
                                             </h3>
 
                                             <div className="flex items-center gap-2">
-                                                <span className="text-lg font-semibold text-foreground">${product.price}</span>
+                                                <span className="text-lg font-semibold text-foreground">{settings.currencySymbol}{product.price}</span>
                                                 {product.originalPrice && (
                                                     <span className="text-sm text-muted-foreground line-through">
-                                                        ${product.originalPrice}
+                                                        {settings.currencySymbol}{product.originalPrice}
                                                     </span>
                                                 )}
                                             </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight, Star, ShoppingBag, Eye } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useStore } from "@/context/StoreContext";
 import { toast } from "sonner";
 
 const watch1 = "/assets/watches/watch-1.png";
@@ -126,6 +127,7 @@ export const ClockHeroSlider = () => {
 
   const activeWatch = watches[activeIndex];
   const { addToCart } = useCart();
+  const { settings } = useStore();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -323,11 +325,11 @@ export const ClockHeroSlider = () => {
                 </div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-bold" style={{ color: activeWatch.color }}>
-                    ${activeWatch.price}
+                    {settings.currencySymbol}{activeWatch.price}
                   </span>
                   {activeWatch.originalPrice && (
                     <span className="text-lg text-muted-foreground line-through">
-                      ${activeWatch.originalPrice}
+                      {settings.currencySymbol}{activeWatch.originalPrice}
                     </span>
                   )}
                 </div>
@@ -632,7 +634,7 @@ export const ClockHeroSlider = () => {
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ delay: 0.3, type: "spring" }}
                   >
-                    <span className="font-bold text-lg">${activeWatch.price}</span>
+                    <span className="font-bold text-lg">{settings.currencySymbol}{activeWatch.price}</span>
                   </motion.div>
                 </motion.div>
               </AnimatePresence>

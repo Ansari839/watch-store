@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useStore } from "@/context/StoreContext";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -39,6 +40,7 @@ export const FeaturedProducts = () => {
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { settings } = useStore();
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -221,10 +223,10 @@ export const FeaturedProducts = () => {
                 </h3>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">${product.price}</span>
+                  <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">{settings.currencySymbol}{product.price}</span>
                   {product.originalPrice && (
                     <span className="text-sm text-muted-foreground line-through decoration-primary/30">
-                      ${product.originalPrice}
+                      {settings.currencySymbol}{product.originalPrice}
                     </span>
                   )}
                 </div>

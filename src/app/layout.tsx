@@ -13,11 +13,30 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Time Capsule Collective | Premium Watch Store",
-  description: "Discover the finest collection of luxury timepieces.",
-};
+import { TrackingScripts } from "@/components/providers/TrackingScripts";
+import { prisma } from "@/lib/prisma";
 
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    // Defensive check for Turbopack caching issues
+    const settingsModel = (prisma as any).storeSettings;
+    const settings = settingsModel ? await settingsModel.findUnique({ where: { id: "singleton" } }) : null;
+
+    return {
+      title: settings?.siteTitle || "Watch Store | Premium Timepieces",
+      description: settings?.siteDescription || "Discover the finest collection of luxury timepieces.",
+      keywords: settings?.keywords || "watches, luxury, premium",
+    };
+  } catch (error) {
+    console.error("Metadata Generation Error:", error);
+    return {
+      title: "Watch Store | Premium Timepieces",
+      description: "Discover the finest collection of luxury timepieces.",
+    };
+  }
+}
+
+import { StoreProvider } from "@/context/StoreContext";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { AuthProvider } from "@/components/providers/AuthProvider";
@@ -34,12 +53,15 @@ export default function RootLayout({
       <body className={`${playfair.variable} ${inter.variable} font-sans bg-background text-foreground antialiased`}>
         <ThemeProvider>
           <AuthProvider>
-            <WishlistProvider>
-              <CartProvider>
-                <LayoutContent>{children}</LayoutContent>
-                <Toaster position="top-center" richColors />
-              </CartProvider>
-            </WishlistProvider>
+            <StoreProvider>
+              <WishlistProvider>
+                <CartProvider>
+                  <TrackingScripts />
+                  <LayoutContent>{children}</LayoutContent>
+                  <Toaster position="top-center" richColors />
+                </CartProvider>
+              </WishlistProvider>
+            </StoreProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

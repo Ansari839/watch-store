@@ -179,5 +179,12 @@ model StoreSettings {
   whatsappNotify    Boolean  @default(true)
   whatsappNumber    String?  // The number customer will contact
   
+  // Marketing & SEO
+  metaPixelId       String?
+  googleAnalyticsId String?
+  siteTitle         String   @default("Watch Store - Premium Timepieces")
+  siteDescription   String   @default("Discover the finest luxury watches from top brands.")
+  keywords          String?  // Comma separated
+  
   updatedAt         DateTime @updatedAt
 }

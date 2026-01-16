@@ -16,10 +16,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useStore } from "@/context/StoreContext";
 import { toast } from "sonner";
 
 export default function CheckoutPage() {
     const { cart, total, clearCart } = useCart();
+    const { settings } = useStore();
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [couponCode, setCouponCode] = useState("");
@@ -44,7 +46,7 @@ export default function CheckoutPage() {
                 toast.success("10% Discount Applied!");
             } else if (couponCode.toUpperCase() === "TIMELESS") {
                 setDiscount(50);
-                toast.success("$50 Discount Applied!");
+                toast.success(`${settings.currencySymbol}50 Discount Applied!`);
             } else {
                 toast.error("Invalid coupon code.");
             }
@@ -288,7 +290,7 @@ export default function CheckoutPage() {
                                                     <span className="font-bold text-muted-foreground">x{item.quantity}</span>
                                                     <span className="font-medium text-sm line-clamp-1">{item.name}</span>
                                                 </div>
-                                                <span className="font-bold">${(item.price * item.quantity).toLocaleString()}</span>
+                                                <span className="font-bold">{settings.currencySymbol}{(item.price * item.quantity).toLocaleString()}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -317,23 +319,23 @@ export default function CheckoutPage() {
                                     <div className="space-y-3 pt-6 border-t border-border/50">
                                         <div className="flex justify-between text-muted-foreground text-sm font-medium">
                                             <span>Subtotal</span>
-                                            <span>${total.toLocaleString()}</span>
+                                            <span>{settings.currencySymbol}{total.toLocaleString()}</span>
                                         </div>
                                         {discount > 0 && (
                                             <div className="flex justify-between text-emerald-500 text-sm font-bold">
                                                 <span>Discount</span>
-                                                <span>-${discount.toLocaleString()}</span>
+                                                <span>-{settings.currencySymbol}{discount.toLocaleString()}</span>
                                             </div>
                                         )}
                                         <div className="flex justify-between text-muted-foreground text-sm font-medium">
                                             <span>Shipping</span>
                                             <span className={shippingFee === 0 ? "text-green-500 font-bold" : "text-foreground font-bold"}>
-                                                {shippingFee === 0 ? "FREE" : `$${shippingFee.toLocaleString()}`}
+                                                {shippingFee === 0 ? "FREE" : `${settings.currencySymbol}${shippingFee.toLocaleString()}`}
                                             </span>
                                         </div>
                                         <div className="flex justify-between items-end pt-4">
                                             <span className="font-display font-medium text-lg uppercase tracking-widest text-muted-foreground">Total</span>
-                                            <span className="text-3xl font-display font-bold">${(total - discount + shippingFee).toLocaleString()}</span>
+                                            <span className="text-3xl font-display font-bold">{settings.currencySymbol}{(total - discount + shippingFee).toLocaleString()}</span>
                                         </div>
                                     </div>
 

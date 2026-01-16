@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useStore } from "@/context/StoreContext";
 import { toast } from "sonner";
 
 export default function ProductDetailPage() {
@@ -38,6 +39,7 @@ export default function ProductDetailPage() {
     const [view3D, setView3D] = useState(true);
     const { addToCart } = useCart();
     const { toggleWishlist, isInWishlist } = useWishlist();
+    const { settings } = useStore();
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -89,7 +91,7 @@ export default function ProductDetailPage() {
     }
 
     const features = [
-        { icon: Truck, title: "Free Shipping", description: "On orders over $150" },
+        { icon: Truck, title: "Free Shipping", description: `On orders over ${settings.currencySymbol}150` },
         { icon: Shield, title: "2 Year Warranty", description: "Full coverage included" },
         { icon: RefreshCcw, title: "30 Day Returns", description: "Hassle-free process" },
     ];
@@ -214,14 +216,14 @@ export default function ProductDetailPage() {
                                     </div>
 
                                     <div className="flex items-baseline gap-3 mb-8">
-                                        <span className="text-3xl font-bold text-foreground">${product.price}</span>
+                                        <span className="text-3xl font-bold text-foreground">{settings.currencySymbol}{product.price}</span>
                                         {product.originalPrice && (
                                             <>
                                                 <span className="text-xl text-muted-foreground line-through">
-                                                    ${product.originalPrice}
+                                                    {settings.currencySymbol}{product.originalPrice}
                                                 </span>
                                                 <span className="px-2 py-1 bg-accent/10 text-accent text-sm font-medium rounded">
-                                                    Save ${product.originalPrice - product.price}
+                                                    Save {settings.currencySymbol}{product.originalPrice - product.price}
                                                 </span>
                                             </>
                                         )}

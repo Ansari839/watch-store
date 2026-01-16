@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { useCart } from "@/context/CartContext";
+import { useStore } from "@/context/StoreContext";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -35,6 +36,7 @@ export const Header = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const pathname = usePathname();
   const { cart, total, itemCount, removeFromCart, updateQuantity } = useCart();
+  const { settings } = useStore();
   const { data: session, status } = useSession();
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -300,7 +302,7 @@ export const Header = () => {
                               <Plus className="w-3 h-3" />
                             </button>
                           </div>
-                          <p className="font-display text-sm font-bold">${(item.price * item.quantity).toLocaleString()}</p>
+                          <p className="font-display text-sm font-bold">{settings.currencySymbol}{(item.price * item.quantity).toLocaleString()}</p>
                         </div>
                       </div>
                     </div>
@@ -324,7 +326,7 @@ export const Header = () => {
                 <div className="p-6 border-t border-border/50 bg-[#F8F9FA] dark:bg-background/20 space-y-4">
                   <div className="flex justify-between items-end">
                     <span className="text-muted-foreground text-sm font-bold uppercase tracking-widest">Subtotal</span>
-                    <span className="text-2xl font-display font-bold">${total.toLocaleString()}</span>
+                    <span className="text-2xl font-display font-bold">{settings.currencySymbol}{total.toLocaleString()}</span>
                   </div>
                   <Button
                     onClick={() => setIsCartOpen(false)}

@@ -14,7 +14,10 @@ import {
     CreditCard,
     TrendingUp,
     Truck,
-    AlertCircle
+    AlertCircle,
+    Activity,
+    Search as SearchIcon,
+    Share2
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
@@ -76,6 +79,7 @@ export default function SettingsPage() {
         { name: "Localization", icon: Globe },
         { name: "Communication", icon: Mail },
         { name: "Operations", icon: TrendingUp },
+        { name: "Marketing", icon: Share2 },
     ];
 
     if (loading) {
@@ -175,7 +179,21 @@ export default function SettingsPage() {
                                     <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Primary Currency</label>
                                     <select
                                         value={settings?.currency || "USD"}
-                                        onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            const symbolMap: any = {
+                                                'USD': '$',
+                                                'PKR': 'Rs',
+                                                'EUR': '€',
+                                                'GBP': '£',
+                                                'AED': 'DH'
+                                            };
+                                            setSettings({
+                                                ...settings,
+                                                currency: val,
+                                                currencySymbol: symbolMap[val] || settings.currencySymbol
+                                            });
+                                        }}
                                         className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
                                     >
                                         <option value="USD">USD - US Dollar</option>
@@ -349,6 +367,105 @@ export default function SettingsPage() {
                                     >
                                         <div className={`w-7 h-7 rounded-full bg-white shadow-md transform transition-transform ${settings?.maintenanceMode ? "translate-x-10" : "translate-x-0"}`} />
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === "Marketing" && (
+                        <div className="bg-white dark:bg-card p-10 rounded-[3rem] border border-border/50 shadow-premium">
+                            <div className="flex items-center justify-between mb-10">
+                                <div>
+                                    <h3 className="text-2xl font-bold">Marketing & SEO</h3>
+                                    <p className="text-muted-foreground">Manage your ad tracking and search engine optimization.</p>
+                                </div>
+                                <Button onClick={() => handleSave({
+                                    metaPixelId: settings.metaPixelId,
+                                    googleAnalyticsId: settings.googleAnalyticsId,
+                                    siteTitle: settings.siteTitle,
+                                    siteDescription: settings.siteDescription,
+                                    keywords: settings.keywords
+                                })} disabled={saving} className="rounded-xl h-12 px-6 bg-primary font-bold">
+                                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                                    Save Marketing
+                                </Button>
+                            </div>
+
+                            <div className="space-y-10">
+                                {/* Tracking IDs */}
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Meta Pixel ID (Ads)</label>
+                                        <div className="relative">
+                                            <Activity className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                            <input
+                                                type="text"
+                                                value={settings?.metaPixelId || ""}
+                                                onChange={(e) => setSettings({ ...settings, metaPixelId: e.target.value })}
+                                                placeholder="e.g. 1234567890"
+                                                className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl pl-16 pr-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Google Analytics ID</label>
+                                        <div className="relative">
+                                            <TrendingUp className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                            <input
+                                                type="text"
+                                                value={settings?.googleAnalyticsId || ""}
+                                                onChange={(e) => setSettings({ ...settings, googleAnalyticsId: e.target.value })}
+                                                placeholder="e.g. G-XXXXXXX"
+                                                className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl pl-16 pr-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* SEO Meta */}
+                                <div className="pt-8 border-t border-border/50 space-y-8">
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Site Title (For Google)</label>
+                                        <input
+                                            type="text"
+                                            value={settings?.siteTitle || ""}
+                                            onChange={(e) => setSettings({ ...settings, siteTitle: e.target.value })}
+                                            className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold text-xl"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Meta Description</label>
+                                        <textarea
+                                            value={settings?.siteDescription || ""}
+                                            onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
+                                            rows={4}
+                                            className="w-full bg-muted/20 border border-border/50 rounded-2xl p-6 outline-none focus:ring-2 ring-primary/20 transition-all font-medium leading-relaxed"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Keywords (Comma Separated)</label>
+                                        <input
+                                            type="text"
+                                            value={settings?.keywords || ""}
+                                            onChange={(e) => setSettings({ ...settings, keywords: e.target.value })}
+                                            placeholder="luxury watches, premium timepieces, brand name"
+                                            className="w-full h-14 bg-muted/20 border border-border/50 rounded-2xl px-6 outline-none focus:ring-2 ring-primary/20 transition-all font-bold"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Preview Card */}
+                                <div className="p-8 rounded-[2rem] bg-slate-900 text-white overflow-hidden relative border border-white/5">
+                                    <div className="absolute top-4 right-6 flex items-center gap-1 text-[10px] font-black uppercase text-white/20 tracking-widest">
+                                        <SearchIcon className="w-3 h-3" /> Search Preview
+                                    </div>
+                                    <div className="relative z-10 max-w-2xl">
+                                        <h4 className="text-blue-400 text-xl font-medium mb-1 truncate hover:underline cursor-pointer">{settings?.siteTitle || "Watch Store"}</h4>
+                                        <p className="text-emerald-500 text-sm mb-2 truncate">https://yourstore.com</p>
+                                        <p className="text-white/60 text-sm line-clamp-2 leading-relaxed">
+                                            {settings?.siteDescription || "Enter a description to see how your store appears in Google search results."}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
