@@ -11,6 +11,25 @@ const watch5 = "/assets/watches/watch-5.png";
 
 export const PromoSection = () => {
   const { settings } = useStore();
+  const [cms, setCms] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchCMS = async () => {
+      try {
+        const res = await fetch("/api/admin/landing");
+        if (res.ok) {
+          const data = await res.json();
+          setCms(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch CMS for promos:", error);
+      }
+    };
+    fetchCMS();
+  }, []);
+
+  const promo = cms?.promoCards || {};
+
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -29,16 +48,16 @@ export const PromoSection = () => {
             <div className="relative z-10">
               <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold tracking-[0.2em] uppercase mb-8 border border-white/20">
                 <Percent className="w-4 h-4" />
-                Limited Time Offer
+                {promo.main?.tag || "Limited Time Offer"}
               </span>
-              <h3 className="font-display text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-                Season Sale<br />Up to 40% Off
+              <h3 className="font-display text-4xl lg:text-5xl font-bold mb-6 leading-tight whitespace-pre-line">
+                {promo.main?.title || "Season Sale\nUp to 40% Off"}
               </h3>
               <p className="text-white/80 text-lg max-w-sm mb-10 leading-relaxed">
-                Experience luxury for less. Our exclusive seasonal timepiece collection is now available at exceptional prices.
+                {promo.main?.description || "Experience luxury for less. Our exclusive seasonal timepiece collection is now available at exceptional prices."}
               </p>
               <Button asChild variant="secondary" size="lg" className="h-14 px-10 rounded-2xl bg-white text-primary hover:bg-white/90 shadow-xl group border-none">
-                <Link href="/products" className="flex items-center gap-3 font-bold">
+                <Link href={promo.main?.link || "/products"} className="flex items-center gap-3 font-bold">
                   Shop the Sale
                   <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -47,7 +66,7 @@ export const PromoSection = () => {
 
             {/* Watch Image */}
             <motion.img
-              src={watch4}
+              src={promo.main?.image || watch4}
               alt="Sale Watch"
               className="absolute right-4 bottom-4 w-48 h-48 lg:w-64 lg:h-64 object-contain drop-shadow-2xl"
               animate={{
@@ -73,13 +92,15 @@ export const PromoSection = () => {
               className="group"
             >
               <Link
-                href="/products?sort=new"
+                href={promo.side1?.link || "/products?sort=new"}
                 className="relative block rounded-[2.5rem] bg-white dark:bg-card p-8 lg:p-10 overflow-hidden shadow-soft transition-all duration-500 hover:shadow-premium group h-[211px]"
               >
                 <div className="relative z-10 h-full flex flex-col justify-center">
-                  <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase mb-2">Just Arrived</span>
+                  <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase mb-2">
+                    {promo.side1?.tag || "Just Arrived"}
+                  </span>
                   <h3 className="font-display text-3xl font-bold text-foreground mb-4">
-                    New Collection
+                    {promo.side1?.title || "New Collection"}
                   </h3>
                   <span className="inline-flex items-center gap-2 text-primary font-bold transition-all group-hover:gap-4">
                     Discover Now <ArrowRight className="w-5 h-5" />
@@ -87,7 +108,7 @@ export const PromoSection = () => {
                 </div>
                 <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-grid opacity-20 pointer-events-none" />
                 <motion.img
-                  src={watch5}
+                  src={promo.side1?.image || watch5}
                   alt="New Collection"
                   className="absolute -right-8 -bottom-8 w-48 h-48 lg:w-56 lg:h-56 object-contain rotate-[-15deg] group-hover:rotate-[0deg] transition-all duration-700 pointer-events-none"
                 />
@@ -108,10 +129,14 @@ export const PromoSection = () => {
                   <Clock className="w-8 h-8" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-white/80 mb-1 block">Global Logistics</span>
-                  <h3 className="font-display text-2xl lg:text-3xl font-bold mb-2">Free Express Shipping</h3>
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-white/80 mb-1 block">
+                    {promo.side2?.tag || "Global Logistics"}
+                  </span>
+                  <h3 className="font-display text-2xl lg:text-3xl font-bold mb-2">
+                    {promo.side2?.title || "Free Express Shipping"}
+                  </h3>
                   <p className="text-white/80 text-sm max-w-xs leading-relaxed">
-                    Complimentary worldwide delivery on all orders over {settings.currencySymbol}150. Your luxury timepiece, delivered with care.
+                    {promo.side2?.description || `Complimentary worldwide delivery on all orders over ${settings.currencySymbol}150. Your luxury timepiece, delivered with care.`}
                   </p>
                 </div>
               </div>

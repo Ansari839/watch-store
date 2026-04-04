@@ -28,7 +28,16 @@ export class CMSController {
     static async updateSettings(req: Request) {
         try {
             const body = await req.json();
-            const { heroProductIds, featuredIds, categoryImages, footerEmail, footerPhone, footerAddress, footerSocials } = body;
+            const {
+                heroProductIds,
+                featuredIds,
+                categoryImages,
+                promoCards,
+                footerEmail,
+                footerPhone,
+                footerAddress,
+                footerSocials
+            } = body;
 
             const settings = await prisma.landingPageSettings.upsert({
                 where: { id: "singleton" },
@@ -36,6 +45,7 @@ export class CMSController {
                     heroProductIds,
                     featuredIds,
                     categoryImages,
+                    promoCards,
                     footerEmail,
                     footerPhone,
                     footerAddress,
@@ -46,6 +56,7 @@ export class CMSController {
                     heroProductIds: heroProductIds || [],
                     featuredIds: featuredIds || [],
                     categoryImages,
+                    promoCards,
                     footerEmail,
                     footerPhone,
                     footerAddress,

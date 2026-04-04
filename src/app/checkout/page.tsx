@@ -38,20 +38,35 @@ export default function CheckoutPage() {
 
     const [shippingFee, setShippingFee] = useState(0);
 
-    const handleApplyCoupon = () => {
+    const handleApplyCoupon = async () => {
         setIsApplyingCoupon(true);
-        setTimeout(() => {
-            if (couponCode.toUpperCase() === "LUXE10") {
-                setDiscount(total * 0.1);
-                toast.success("10% Discount Applied!");
-            } else if (couponCode.toUpperCase() === "TIMELESS") {
-                setDiscount(50);
-                toast.success(`${settings.currencySymbol}50 Discount Applied!`);
+        try {
+            const res = await fetch("/api/coupons/validate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: couponCode, cartTotal: total })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                let discountAmount = 0;
+                if (data.type === "PERCENTAGE") {
+                    discountAmount = total * (data.value / 100);
+                } else {
+                    discountAmount = data.value;
+                }
+                setDiscount(discountAmount);
+                toast.success(`Coupon Applied! Saved ${settings.currencySymbol}${discountAmount.toFixed(2)}`);
             } else {
-                toast.error("Invalid coupon code.");
+                toast.error(data.error || "Invalid coupon code.");
+                setDiscount(0);
             }
+        } catch (error) {
+            toast.error("Failed to validate coupon.");
+        } finally {
             setIsApplyingCoupon(false);
-        }, 800);
+        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -83,7 +98,9 @@ export default function CheckoutPage() {
                         customerName: formData.customerName,
                         shippingAddress: formData.shippingAddress,
                         customerPhone: formData.customerPhone,
-                        whatsappEnabled: formData.whatsappEnabled
+                        whatsappEnabled: formData.whatsappEnabled,
+                        discountCode: discount > 0 ? couponCode : null,
+                        discountAmount: discount
                     })
                 });
                 const { url } = await stripeRes.json();
@@ -99,7 +116,9 @@ export default function CheckoutPage() {
                 body: JSON.stringify({
                     ...formData,
                     items: cart,
-                    total
+                    total: total - discount + shippingFee,
+                    discountCode: discount > 0 ? couponCode : null,
+                    discountAmount: discount
                 })
             });
 

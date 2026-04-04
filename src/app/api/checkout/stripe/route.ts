@@ -12,7 +12,16 @@ export async function POST(req: Request) {
         if (!stripe) {
             return NextResponse.json({ error: "Stripe is not configured" }, { status: 500 });
         }
-        const { items, customerEmail, customerName, shippingAddress, customerPhone, whatsappEnabled } = await req.json();
+        const {
+            items,
+            customerEmail,
+            customerName,
+            shippingAddress,
+            customerPhone,
+            whatsappEnabled,
+            discountCode,
+            discountAmount
+        } = await req.json();
 
         // In a real app, you'd calculate the price on the server
         const line_items = items.map((item: any) => ({
@@ -27,6 +36,20 @@ export async function POST(req: Request) {
             quantity: item.quantity,
         }));
 
+        // Add Discount if applicable
+        if (discountAmount > 0) {
+            line_items.push({
+                price_data: {
+                    currency: "usd",
+                    product_data: {
+                        name: `Discount (${discountCode || "Promo Code"})`,
+                    },
+                    unit_amount: -Math.round(discountAmount * 100), // Negative amount for discount
+                },
+                quantity: 1,
+            });
+        }
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items,
@@ -39,6 +62,8 @@ export async function POST(req: Request) {
                 shippingAddress,
                 customerPhone,
                 whatsappEnabled: whatsappEnabled.toString(),
+                discountCode: discountCode || "",
+                discountAmount: (discountAmount || 0).toString(),
             },
         });
 

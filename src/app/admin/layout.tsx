@@ -17,7 +17,8 @@ import {
     Layout,
     Search,
     Menu,
-    X
+    X,
+    Ticket
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -53,6 +54,7 @@ export default function AdminDashboardLayout({
         { icon: LayoutDashboard, label: "Overview", href: "/admin" },
         { icon: Box, label: "Products", href: "/admin/products" },
         { icon: ShoppingBag, label: "Orders", href: "/admin/orders" },
+        { icon: Ticket, label: "Coupons", href: "/admin/coupons" },
         { icon: Users, label: "Customers", href: "/admin/customers" },
         { icon: TrendingUp, label: "Analytics", href: "/admin/analytics" },
         { icon: Layout, label: "Landing Page", href: "/admin/landing" },

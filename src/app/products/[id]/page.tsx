@@ -92,7 +92,7 @@ export default function ProductDetailPage() {
 
     const features = [
         { icon: Truck, title: "Free Shipping", description: `On orders over ${settings.currencySymbol}150` },
-        { icon: Shield, title: "2 Year Warranty", description: "Full coverage included" },
+        { icon: Shield, title: "100% Authentic", description: "Certified genuine timepiece" },
         { icon: RefreshCcw, title: "30 Day Returns", description: "Hassle-free process" },
     ];
 

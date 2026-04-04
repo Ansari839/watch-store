@@ -42,42 +42,33 @@ export const FeaturedProducts = () => {
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { settings } = useStore();
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        // Fetch CMS settings and products in parallel
         const [settingsRes, prodRes] = await Promise.all([
           fetch("/api/admin/landing"),
           fetch("/api/products")
         ]);
 
         if (!prodRes.ok) {
-          console.error(`API returned status ${prodRes.status}`);
           setProducts([]);
           setLoading(false);
           return;
         }
 
-        const settings = await settingsRes.json();
+        const settingsData = await settingsRes.json();
         const allProducts = await prodRes.json();
 
-        if (!Array.isArray(allProducts)) {
-          console.error("Expected array but received:", allProducts);
-          setProducts([]);
-          setLoading(false);
-          return;
-        }
-
-        if (settings?.featuredIds?.length > 0) {
-          // Use CMS selected products
-          const featured = settings.featuredIds
+        if (settingsData?.featuredIds?.length > 0) {
+          const featured = settingsData.featuredIds
             .map((id: string) => allProducts.find((p: any) => p.id === id))
             .filter(Boolean);
           setProducts(featured);
         } else {
-          // Fallback to products marked 'featured' in DB
-          const featured = allProducts.filter((p: any) => p.featured).slice(0, 4);
-          setProducts(featured.length > 0 ? featured : allProducts.slice(0, 4));
+          const featured = allProducts.filter((p: any) => p.featured);
+          setProducts(featured.length > 0 ? featured : allProducts.slice(0, 8));
         }
       } catch (error) {
         console.error("Failed to fetch featured products:", error);
@@ -89,6 +80,14 @@ export const FeaturedProducts = () => {
     fetchFeatured();
   }, []);
 
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % Math.ceil(products.length / 4));
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + Math.ceil(products.length / 4)) % Math.ceil(products.length / 4));
+  };
+
   if (loading) {
     return (
       <div className="py-24 flex items-center justify-center">
@@ -97,41 +96,63 @@ export const FeaturedProducts = () => {
     );
   }
 
+  const showCarousel = products.length > 4;
+  const visibleProducts = showCarousel
+    ? products.slice(currentIndex * 4, (currentIndex * 4) + 4)
+    : products.slice(0, 4);
+
   return (
-    <section className="py-16 lg:py-24 bg-transparent relative">
+    <section className="py-16 lg:py-24 bg-transparent relative overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <span className="text-primary font-semibold text-xs tracking-[0.2em] uppercase">
-            Curated Selection
-          </span>
-          <h2 className="font-display text-4xl lg:text-5xl font-bold text-foreground mt-4 mb-6">
-            Featured Timepieces
-          </h2>
-          <div className="w-20 h-1 bg-primary/20 mx-auto rounded-full mb-8" />
-          <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Discover our collection of exceptional watches, chosen for their distinctive character,
-            unrivaled precision, and timeless luxury.
-          </p>
-        </motion.div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="text-left"
+          >
+            <span className="text-primary font-semibold text-xs tracking-[0.2em] uppercase">
+              Curated Selection
+            </span>
+            <h2 className="font-display text-4xl lg:text-5xl font-bold text-foreground mt-4">
+              Featured Timepieces
+            </h2>
+          </motion.div>
 
-        {/* Products Grid */}
+          {showCarousel && (
+            <div className="flex gap-3">
+              <button
+                onClick={prevSlide}
+                className="w-12 h-12 rounded-2xl border-2 border-border/50 flex items-center justify-center hover:border-primary hover:text-primary transition-all group active:scale-95"
+              >
+                <ChevronRight className="w-6 h-6 rotate-180" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="w-12 h-12 rounded-2xl border-2 border-border/50 flex items-center justify-center hover:border-primary hover:text-primary transition-all group active:scale-95"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Products Grid / Carousel */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          key={currentIndex}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
         >
-          {products.map((product) => (
+          {visibleProducts.map((product) => (
             <motion.div
               key={product.id}
               variants={itemVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
               className="group"
             >
               {/* Product Card Container */}

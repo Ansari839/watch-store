@@ -281,7 +281,7 @@ export default function ContactPage() {
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-2" />
-                                            <span>All watches include a 2-year warranty</span>
+                                            <span>All watches are certified 100% authentic</span>
                                         </li>
                                         <li className="flex items-start gap-2">
                                             <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-2" />

@@ -375,10 +375,6 @@ export const ClockHeroSlider = () => {
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 Free Shipping
               </div>
-              {/* <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                2 Year Warranty
-              </div> */}
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-purple-500" />
                 Easy Returns

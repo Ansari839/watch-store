@@ -26,6 +26,7 @@ export default function LandingPageManagement() {
         heroProductIds: [],
         featuredIds: [],
         categoryImages: {},
+        promoCards: {},
         footerEmail: "",
         footerPhone: "",
         footerAddress: "",
@@ -251,6 +252,235 @@ export default function LandingPageManagement() {
                                 />
                             </div>
                         ))}
+                    </div>
+                </section>
+
+                {/* Promo Cards Management */}
+                <section className="lg:col-span-2 bg-white dark:bg-card p-8 rounded-[2.5rem] border border-border/50 shadow-soft">
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+                            <Plus className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold">Promo Sections</h2>
+                            <p className="text-sm text-muted-foreground">Manage the sale and promotional cards on your home page.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                        {/* Main Sale Promo */}
+                        <div className="space-y-6 p-8 rounded-[2rem] bg-muted/20 border border-border/30">
+                            <h3 className="font-bold text-lg flex items-center gap-2">
+                                <span className="w-2 h-8 bg-primary rounded-full" />
+                                Main Sale Promo (Large Card)
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Tag</label>
+                                    <input
+                                        type="text"
+                                        value={settings.promoCards?.main?.tag || "Limited Time Offer"}
+                                        onChange={(e) => setSettings({
+                                            ...settings,
+                                            promoCards: {
+                                                ...settings.promoCards,
+                                                main: { ...settings.promoCards?.main, tag: e.target.value }
+                                            }
+                                        })}
+                                        className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Title</label>
+                                    <input
+                                        type="text"
+                                        value={settings.promoCards?.main?.title || "Season Sale Up to 40% Off"}
+                                        onChange={(e) => setSettings({
+                                            ...settings,
+                                            promoCards: {
+                                                ...settings.promoCards,
+                                                main: { ...settings.promoCards?.main, title: e.target.value }
+                                            }
+                                        })}
+                                        className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                    />
+                                </div>
+                                <div className="space-y-2 md:col-span-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Description</label>
+                                    <textarea
+                                        value={settings.promoCards?.main?.description || ""}
+                                        onChange={(e) => setSettings({
+                                            ...settings,
+                                            promoCards: {
+                                                ...settings.promoCards,
+                                                main: { ...settings.promoCards?.main, description: e.target.value }
+                                            }
+                                        })}
+                                        className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm min-h-[80px]"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Watch Image URL</label>
+                                    <input
+                                        type="text"
+                                        value={settings.promoCards?.main?.image || ""}
+                                        onChange={(e) => setSettings({
+                                            ...settings,
+                                            promoCards: {
+                                                ...settings.promoCards,
+                                                main: { ...settings.promoCards?.main, image: e.target.value }
+                                            }
+                                        })}
+                                        className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                        placeholder="/assets/watches/watch-4.png"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Link</label>
+                                    <input
+                                        type="text"
+                                        value={settings.promoCards?.main?.link || "/products"}
+                                        onChange={(e) => setSettings({
+                                            ...settings,
+                                            promoCards: {
+                                                ...settings.promoCards,
+                                                main: { ...settings.promoCards?.main, link: e.target.value }
+                                            }
+                                        })}
+                                        className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Side Promos */}
+                        <div className="space-y-8">
+                            {/* New Collection */}
+                            <div className="space-y-6 p-8 rounded-[2rem] bg-muted/20 border border-border/30">
+                                <h3 className="font-bold text-lg flex items-center gap-2">
+                                    <span className="w-2 h-8 bg-accent rounded-full" />
+                                    Top Side Promo (Arrivals)
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Tag</label>
+                                        <input
+                                            type="text"
+                                            value={settings.promoCards?.side1?.tag || "Just Arrived"}
+                                            onChange={(e) => setSettings({
+                                                ...settings,
+                                                promoCards: {
+                                                    ...settings.promoCards,
+                                                    side1: { ...settings.promoCards?.side1, tag: e.target.value }
+                                                }
+                                            })}
+                                            className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Title</label>
+                                        <input
+                                            type="text"
+                                            value={settings.promoCards?.side1?.title || "New Collection"}
+                                            onChange={(e) => setSettings({
+                                                ...settings,
+                                                promoCards: {
+                                                    ...settings.promoCards,
+                                                    side1: { ...settings.promoCards?.side1, title: e.target.value }
+                                                }
+                                            })}
+                                            className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Image URL</label>
+                                        <input
+                                            type="text"
+                                            value={settings.promoCards?.side1?.image || ""}
+                                            onChange={(e) => setSettings({
+                                                ...settings,
+                                                promoCards: {
+                                                    ...settings.promoCards,
+                                                    side1: { ...settings.promoCards?.side1, image: e.target.value }
+                                                }
+                                            })}
+                                            className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                            placeholder="/assets/watches/watch-5.png"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Link</label>
+                                        <input
+                                            type="text"
+                                            value={settings.promoCards?.side1?.link || "/products?sort=new"}
+                                            onChange={(e) => setSettings({
+                                                ...settings,
+                                                promoCards: {
+                                                    ...settings.promoCards,
+                                                    side1: { ...settings.promoCards?.side1, link: e.target.value }
+                                                }
+                                            })}
+                                            className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Shipping Promo */}
+                            <div className="space-y-6 p-8 rounded-[2rem] bg-muted/20 border border-border/30">
+                                <h3 className="font-bold text-lg flex items-center gap-2">
+                                    <span className="w-2 h-8 bg-indigo-500 rounded-full" />
+                                    Bottom Side Promo (Shipping)
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Tag</label>
+                                        <input
+                                            type="text"
+                                            value={settings.promoCards?.side2?.tag || "Global Logistics"}
+                                            onChange={(e) => setSettings({
+                                                ...settings,
+                                                promoCards: {
+                                                    ...settings.promoCards,
+                                                    side2: { ...settings.promoCards?.side2, tag: e.target.value }
+                                                }
+                                            })}
+                                            className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Title</label>
+                                        <input
+                                            type="text"
+                                            value={settings.promoCards?.side2?.title || "Free Express Shipping"}
+                                            onChange={(e) => setSettings({
+                                                ...settings,
+                                                promoCards: {
+                                                    ...settings.promoCards,
+                                                    side2: { ...settings.promoCards?.side2, title: e.target.value }
+                                                }
+                                            })}
+                                            className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                        />
+                                    </div>
+                                    <div className="space-y-2 md:col-span-2">
+                                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground mr-2">Description</label>
+                                        <input
+                                            type="text"
+                                            value={settings.promoCards?.side2?.description || ""}
+                                            onChange={(e) => setSettings({
+                                                ...settings,
+                                                promoCards: {
+                                                    ...settings.promoCards,
+                                                    side2: { ...settings.promoCards?.side2, description: e.target.value }
+                                                }
+                                            })}
+                                            className="w-full p-4 bg-background border-border border rounded-2xl outline-none focus:ring-2 ring-primary/20 text-sm"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 

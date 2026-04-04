@@ -21,8 +21,8 @@ const benefits = [
   },
   {
     icon: Award,
-    title: "Quality Guaranteed",
-    description: "Authentic timepieces with 2-year warranty",
+    title: "100% Authentic",
+    description: "Certified genuine luxury timepieces",
   },
   {
     icon: Clock,
